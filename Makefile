@@ -1,9 +1,9 @@
-bin=x86
+bin= x86
 
 all: x86
 
-x86: x86_ins.c
-	gcc x86_ins.c -o x86
+x86: instruction.h instruction.c prefix.h prefix.c opcode.h opcode.c main.c
+	gcc instruction.h instruction.c prefix.h prefix.c opcode.h opcode.c main.c -o x86
 
 clean:
 	rm $(bin) 
