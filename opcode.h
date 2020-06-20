@@ -8,6 +8,9 @@
 enum opcodes{
     op_call = 0xe8,
     op_mov = 0x89,
+    op_pop = 0x58,
+    op_push = 0x50,
+    
 };
 
 void check_opcode(struct x86_instr * inst);

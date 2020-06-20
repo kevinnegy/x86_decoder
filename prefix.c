@@ -15,31 +15,33 @@ void check_prefix(struct x86_instr * inst){
     while(opcode_flag == 0 && i < 15){
         switch(bytes[i]){
         case(prefix_lock):
-            break;
+            goto out;
         case(prefix_repn):
             // Must also include bnd
-            break; 
+            goto out; 
         case(prefix_rep):
-            break; 
+            goto out; 
         case(prefix_cs):
             // Must include branchn
-            break;
+            goto out;
         case(prefix_ss):
-            break;
+            goto out;
         case(prefix_ds):
             // Must inlcude branch
-            break;
+            goto out;
         case(prefix_es):
-            break;
+            goto out;
         case(prefix_fs):
-            break;
+            goto out;
         case(prefix_gs):
-            break;
+            goto out;
         case(prefix_op_size_override):
-            break;
+            goto out;
         case(prefix_addr_size_override):
-            break;
-        case(REX):  
+            goto out;
+        }
+        switch(bytes[i] >> 4){ 
+        case(REX >> 4):  
             printf("Reached REX\n");
             inst->rex_ptr = i;
             i++; // REX must come before opcode, check_opcode will generate error if this is not true
@@ -52,8 +54,9 @@ void check_prefix(struct x86_instr * inst){
             inst->opcode_ptr = i;
 
             opcode_flag = 1;
-            break;
+            goto out;
         }
+out:
         if(opcode_flag == 1)
             break;
         i++;

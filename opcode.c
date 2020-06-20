@@ -1,5 +1,6 @@
 #include "opcode.h"
 #include <stdio.h>
+#include <string.h>
 
 // Assumes check_prefix has determined the correct opcode location
 void check_opcode(struct x86_instr * inst){
@@ -7,15 +8,27 @@ void check_opcode(struct x86_instr * inst){
     unsigned char opcode = inst->byte_code[inst->opcode_ptr]; 
     switch(opcode){
     case(op_call):
-        printf("CALL\n");
-        break;
+        strcat(inst->x86_string, "call ");
+        goto exit;
     case(op_mov):
-        printf("MOV\n");
-        break;
+        strcat(inst->x86_string, "mov ");
+        goto exit;
+    }
+    if(opcode >> 3 == op_pop >> 3){
+        strcat(inst->x86_string, "pop ");
+        goto exit;
+    }
+    else if(opcode >> 4 == op_push >> 4){
+        strcat(inst->x86_string, "push ");
+        goto exit;
+    }
+    switch(opcode){
     default:
         printf("check_opcode: invalid opcode\n");
-        break;
+        goto exit;
     }
+exit:
+    return;
 }
 
 

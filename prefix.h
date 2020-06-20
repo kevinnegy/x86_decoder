@@ -24,7 +24,7 @@ enum prefixes{
     prefix_op_size_override = 0x66,
     prefix_addr_size_override = 0x67,
     
-    REX = 0x48, // TODO fix
+    REX = 0x40, // TODO fix
 };
 
 #endif

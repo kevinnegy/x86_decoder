@@ -20,5 +20,8 @@ struct x86_instr{
 };
 
 struct x86_instr * create_x86_instr(char * bytes); 
+char * get_string(struct x86_instr * inst); 
+void disassemble_instr(struct x86_instr * inst);
+void delete_x86_instr(struct x86_instr * inst);
 
 #endif

@@ -3,10 +3,8 @@
 #include <string.h>
 #include "instruction.h"
 
-void disassemble_instr(struct x86_instr * inst);
 void build_x86_string(struct x86_instr * inst);
 
-void check_modrm(struct x86_instr * inst);
 void check_sib(struct x86_instr * inst);
 void check_displacement(struct x86_instr * inst);
 void check_immediate(struct x86_instr * inst);
@@ -29,21 +27,23 @@ struct x86_instr * create_x86_instr(char * bytes){
     inst->byte_code = (unsigned char *) malloc(sizeof(unsigned char) * MAX_INSTR_LEN); 
     memcpy(inst->byte_code, bytes, MAX_INSTR_LEN); 
 
+    inst->x86_string = (char *) malloc(sizeof(char) * 50);
+
     return inst;
 
 }
 
-/** ModR/M **/
-// ModR/M byte - addressing mode byte:
-    // mod first two bits - something
-    // reg/opcode 3bits - a register or further opcode
-    // r/m 3 bits - another register or further opcode
+void delete_x86_instr(struct x86_instr * inst){
+    free(inst->byte_code);
+    free(inst->x86_string);
+    free(inst);
 
-// some ModR/M bytes require a second byte SIB 
-// Scaled index byte:
-    // scale
-    // index - index register
-    // base - base register
+    return;
+}
+
+char * get_string(struct x86_instr * inst){
+    return inst->x86_string;
+}
 
 
 /** Displacement/Immediate **/
