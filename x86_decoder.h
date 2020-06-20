@@ -8,8 +8,8 @@
 
 char * disassemble_x86_instr(char * bytes){
     struct x86_instr * inst = create_x86_instr(bytes);
-    check_prefix(inst);
-    check_opcode(inst);
+    int opcode_index = find_opcode(inst);
+    check_opcode(inst, opcode_index);
     char * x86_string = (char *) malloc(sizeof(char) * 50);
     strcpy(x86_string, get_string(inst));
     

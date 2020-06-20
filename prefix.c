@@ -1,68 +1,90 @@
 #include "prefix.h"
 #include <stdio.h>
+#include <stdlib.h>
 
+// Cycles through prefixes until opcode is found, returns opcode index
+int find_opcode(struct x86_instr * inst){
+    if(inst == NULL){
+        printf("%s: %s\n", __func__, "inst == NULL");
+        return -1;
+    }
+    int i = 0;
+    int opcode_flag = 0; // turn on when prefix not found
 
-
-void check_prefix(struct x86_instr * inst){
     unsigned char * bytes = inst-> byte_code;
     if(bytes == NULL){
-        printf("check_prefix: byte_code is NULL\n");
-        return; 
+        printf("%s: %s\n", __func__, "byte_code is NULL");
+        return -1; 
     }
-    
-    int opcode_flag = 0; // turn on when prefix not found
-    int i = 0;
-    while(opcode_flag == 0 && i < 15){
+
+    while(opcode_flag == 0 && i < MAX_INSTR_LEN){
         switch(bytes[i]){
         case(prefix_lock):
-            goto out;
-        case(prefix_repn):
-            // Must also include bnd
-            goto out; 
+        case(prefix_repn): // Must also include bnd
         case(prefix_rep):
-            goto out; 
-        case(prefix_cs):
-            // Must include branchn
-            goto out;
+        case(prefix_cs): // Must include branchn
         case(prefix_ss):
-            goto out;
-        case(prefix_ds):
-            // Must inlcude branch
-            goto out;
+        case(prefix_ds): // Must include branch
         case(prefix_es):
-            goto out;
         case(prefix_fs):
-            goto out;
         case(prefix_gs):
-            goto out;
         case(prefix_op_size_override):
-            goto out;
         case(prefix_addr_size_override):
-            goto out;
+            inst->prefix_ptr = 0; // Instruction contains prefix
+            goto append;
         }
-        switch(bytes[i] >> 4){ 
-        case(REX >> 4):  
-            printf("Reached REX\n");
+
+        // Check for REX prefix
+        if(prefix_rex <= bytes[i] && bytes[i] <= prefix_rex + 0xf){
             inst->rex_ptr = i;
-            i++; // REX must come before opcode, check_opcode will generate error if this is not true
-        default:
-            printf("Reached opcode %2hhx\n", bytes[i]);
-
-            // Set indices for prefixes and opcode 
-            if(i != 0) // We found prefixes
-                inst->prefix_flag = 1; 
-            inst->opcode_ptr = i;
-
-            opcode_flag = 1;
-            goto out;
+            inst->rex = bytes[i];
+            i++; // REX must come before opcode
         }
+
+        printf("Reached opcode %x\n", bytes[i]);
+        inst->opcode_ptr = i;
+        opcode_flag = 1;
+        goto out;
+append: 
+        printf("append needed");
+
 out:
         if(opcode_flag == 1)
             break;
         i++;
     }
+
+    return i;
 }
 
+// Returns 0 = 16-bit, 1 = 32-bit, 2 = 64-bit
+// TODO should this go in instruction.c?
+int check_bit_mode(struct x86_instr * inst){
+    if (inst->rex != 0x0 && inst->rex & REX_W){
+        return 2;
+    }
+    return 1;
+}
+
+//void decode_rex(struct x86_instr * inst){
+//    if(inst->rex_ptr == -1)
+//        return NULL;
+//
+//    unsigned char rex_byte = inst->byte_code[inst->rex_ptr];
+//    struct prefix_rex * rex = (struct prefix_rex *)malloc(sizeof(struct prefix_rex));
+//    rex->w = rex->r = rex->x = rex->b = 0;
+//
+//    if(rex_byte & REX_W)
+//        rex->w = 1;
+//    if(rex_byte & REX_R)
+//        rex->r = 1;
+//    if(rex_byte & REX_X)
+//        rex->x = 1;
+//    if(rex_byte & REX_B)
+//        rex->b = 1;
+//
+//    return rex;
+//}
 
 // Group 1:
     // FO - LOCK prefix - exclusive use of shared memory in multiprocessor environ
@@ -89,15 +111,3 @@ out:
 
 // Group 4:
     // 67 - address size override prefix (switch between 16 and 32 bit addressing)
-
-
-//REX-prefix is for 64 bit mode instructions. Only used if instruction operates on 64bit registers. "If rex used when no meaning, it is ignored" (is that a problem?)
-// one rex prefix perinstruction, must go right before opcode or escapeopcode byte(0FH) (after any mandatory prefixes)
-// one byte REX prefix: 0100WRXB:
-#define REX_prefix  (1 << 6)    // 0100 required
-#define REX_W       (1 << 3)    // 0 = operand size determined by cs.d, 1 = 64 bit operand size
-#define REX_R       (1 << 2)    // extension of ModR/M reg field
-#define REX_X       (1 << 1)    // extension of SIB index field
-#define REX_B       (1 << 0)    // extension of ModR/M r/m field, SIB base field, or Opcode reg field ( how is this determined?, seems like based on if r or x are set.)
-
-

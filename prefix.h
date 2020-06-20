@@ -4,7 +4,7 @@
 #include "instruction.h"
 
 /** Prefixes **/
-void check_prefix(struct x86_instr * inst);
+int find_opcode(struct x86_instr * inst);
 
 enum prefixes{
     prefix_lock = 0xf0,
@@ -24,7 +24,16 @@ enum prefixes{
     prefix_op_size_override = 0x66,
     prefix_addr_size_override = 0x67,
     
-    REX = 0x40, // TODO fix
+    prefix_rex = 0x40, 
 };
+
+//REX-prefix is for 64 bit mode instructions. Only used if instruction operates on 64bit registers. "If rex used when no meaning, it is ignored" (is that a problem?)
+// one rex prefix perinstruction, must go right before opcode or escapeopcode byte(0FH) (after any mandatory prefixes)
+// one byte REX prefix: 0100WRXB:
+#define REX_prefix  (1 << 6)    // 0100 required
+#define REX_W       (1 << 3)    // 0 = operand size determined by cs.d, 1 = 64 bit operand size
+#define REX_R       (1 << 2)    // extension of ModR/M reg field
+#define REX_X       (1 << 1)    // extension of SIB index field
+#define REX_B       (1 << 0)    // extension of ModR/M r/m field, SIB base field, or Opcode reg field ( how is this determined?, seems like based on if r or x are set.)
 
 #endif
