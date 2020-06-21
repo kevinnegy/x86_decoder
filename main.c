@@ -20,6 +20,7 @@ void test1(unsigned char * bytes){
         printf("%2hhx ", inst->byte_code[i]);
     }
     printf("\n");
+    printf("my string:\n%s\n", inst->x86_string);
     delete_x86_instr(inst);
 }
 
@@ -34,26 +35,32 @@ int main(){
     bytes[1] = 0x89;
     bytes[2] = 0xe7;
     test1(bytes);
+    printf("mov rdi, rsp\n");
 
     bytes[0] = 0xe8;
     bytes[1] = 0x08;
     bytes[2] = 0x0e;
     test1(bytes);
+    printf("call 0x\n");
 
-    bytes[0] = 0x55;
-    bytes[1] = 0x08;
+    bytes[0] = 0x40;
+    bytes[1] = 0x55;
     bytes[2] = 0x0e;
     test1(bytes);
+    printf("push rbp\n");
 
     bytes[0] = 0x48;
     bytes[1] = 0x89;
     bytes[2] = 0xe5;
     test1(bytes);
+    printf("mov rbp, rsp\n");
 
     bytes[0] = 0x41;
     bytes[1] = 0x57;
     bytes[2] = 0xe5;
     test1(bytes);
+    printf("push r15\n");
+
     return 0;
 }
 

@@ -1,5 +1,6 @@
 #ifndef REGISTERS_H
 #define REGISTERS_H
+#include <stdio.h>
 
 // Registers are stored in 3 bits
 
@@ -13,6 +14,11 @@ enum regs_16{
     regs_16_bp = 0x5,
     regs_16_si = 0x6,
     regs_16_di = 0x7,
+};
+
+static char * get_register_16(int index){
+    char * strings[] = {"ax", "cx", "dx", "bx", "sp", "bp", "si", "di"};
+    return strings[index];
 }
 
 enum regs_32{
@@ -24,6 +30,11 @@ enum regs_32{
     regs_32_ebp = 0x5,
     regs_32_esi = 0x6,
     regs_32_edi = 0x7,
+};
+
+static char * get_register_32(int index){
+    char * strings[] = {"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"};
+    return strings[index];
 }
 
 enum regs_64{
@@ -35,6 +46,11 @@ enum regs_64{
     regs_64_rbp = 0x5,
     regs_64_rsi = 0x6,
     regs_64_rdi = 0x7,
+};
+
+static char * get_register_64(int index){
+    char * strings[] = {"rax", "rcx", "rdx", "rbx", "rsp", "rbp", "rsi", "rdi"};
+    return strings[index];
 }
 
 // byte registers, w = 0 (required)
@@ -47,6 +63,11 @@ enum byte_regs_16{
     byte_regs_16_ch = 0x5,
     byte_regs_16_dh = 0x6,
     byte_regs_16_bh = 0x7,
+};
+
+static char * get_byte_register_16(int index){
+    char * strings[] = {"al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"};
+    return strings[index];
 }
 
 enum byte_regs_32{
@@ -58,6 +79,11 @@ enum byte_regs_32{
     byte_regs_32_ech = 0x5,
     byte_regs_32_edh = 0x6,
     byte_regs_32_ebh = 0x7,
+};
+
+static char * get_byte_register_32(int index){
+    char * strings[] = {"eal", "ecl", "edl", "ebl", "eah", "ech", "edh", "ebh"};
+    return strings[index];
 }
 
 enum byte_regs_64{
@@ -69,7 +95,35 @@ enum byte_regs_64{
     byte_regs_64_rch = 0x5,
     byte_regs_64_rdh = 0x6,
     byte_regs_64_rbh = 0x7,
+};
+
+static char * get_byte_register_64(int index){
+    char * strings[] = {"ral", "rcl", "rdl", "rbl", "rah", "rch", "rdh", "rbh"};
+    return strings[index];
 }
 
+char * get_register(int index, int w, int mode){
+    if(index < 0 || index > 7){
+        printf("%s: %s\n", __func__, "register out of range");
+        return NULL;
+    }
+
+    if(mode == 0){ // 16 bit
+        if(w == 0)
+            return get_byte_register_16(index);
+        return get_register_16(index);
+    }
+    else if(mode == 1){ // 32 bit
+        if(w == 0)
+            return get_byte_register_32(index);
+        return get_register_32(index);
+    }
+    else if(mode == 2){ // 64 bit
+        if(w == 0)
+            return get_byte_register_64(index);
+        return get_register_64(index);
+    }
+    return NULL;        
+}
 #endif 
 

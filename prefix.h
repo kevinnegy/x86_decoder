@@ -5,6 +5,7 @@
 
 /** Prefixes **/
 int find_opcode(struct x86_instr * inst);
+int check_bit_mode(struct x86_instr * inst);
 
 enum prefixes{
     prefix_lock = 0xf0,
