@@ -3,6 +3,21 @@
 #include <string.h>
 #include "instruction.h"
 
+void set_bit_mode(int mode){
+    switch(mode){
+        case(16):
+            DEFAULT_BIT_MODE = 16;
+        case(32):
+            DEFAULT_BIT_MODE = 32;
+        case(64):
+            DEFAULT_BIT_MODE = 64;
+        default:
+            printf("%s: %s %d\n", __func__, "invalid bit mode", mode);
+            printf("Setting default to 64\n");
+            DEFAULT_BIT_MODE = 64;
+    }
+}
+
 void build_x86_string(struct x86_instr * inst);
 void check_sib(struct x86_instr * inst);
 void check_displacement(struct x86_instr * inst);

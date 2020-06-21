@@ -57,13 +57,13 @@ out:
     return i;
 }
 
-// Returns 0 = 16-bit, 1 = 32-bit, 2 = 64-bit
+// Returns 16, 32, 64
 // TODO should this go in instruction.c?
 int check_bit_mode(struct x86_instr * inst){
     if (inst->rex != 0x0 && inst->rex & REX_W){
-        return 2;
+        return 64;   
     }
-    return 1;
+    return DEFAULT_BIT_MODE;
 }
 
 //void decode_rex(struct x86_instr * inst){

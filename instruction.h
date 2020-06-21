@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define MAX_INSTR_LEN 15 
+int DEFAULT_BIT_MODE;
 
 // intel syntax has destination first like mips
 // bytes should be stored as unsigned char, 2 digit hexadecimals
@@ -36,6 +37,7 @@ struct x86_instr{
     char * x86_string;
 };
 
+void set_bit_mode(int mode);
 struct x86_instr * create_x86_instr(char * bytes); 
 char * get_string(struct x86_instr * inst); 
 void disassemble_instr(struct x86_instr * inst);

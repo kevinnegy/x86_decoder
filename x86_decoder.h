@@ -16,8 +16,13 @@ char * disassemble_x86_instr(char * bytes){
     // Destroy instruction pointer
     delete_x86_instr(inst);
     return x86_string;
-
 }
+
+void x86_decoder_init(int mode){
+    set_bit_mode(mode);
+    return;
+}
+
 
 
 #endif

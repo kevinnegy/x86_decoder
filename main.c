@@ -30,6 +30,8 @@ int main(){
         printf("malloc failed in main()\n");
         return -1;
     }
+    
+    set_bit_mode(64);
 
     bytes[0] = 0x48;
     bytes[1] = 0x89;
