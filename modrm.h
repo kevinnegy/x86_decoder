@@ -3,7 +3,7 @@
 
 #include "instruction.h"
 
-void check_modrm(struct x86_instr * inst);
+void check_modrm(struct x86_instr * inst, int mode);
 
 /** ModR/M **/
 // ModR/M byte - addressing mode byte:

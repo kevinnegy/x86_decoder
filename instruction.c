@@ -7,10 +7,13 @@ void set_bit_mode(int mode){
     switch(mode){
         case(16):
             DEFAULT_BIT_MODE = 16;
+            break;
         case(32):
             DEFAULT_BIT_MODE = 32;
+            break;
         case(64):
             DEFAULT_BIT_MODE = 64;
+            break;
         default:
             printf("%s: %s %d\n", __func__, "invalid bit mode", mode);
             printf("Setting default to 64\n");

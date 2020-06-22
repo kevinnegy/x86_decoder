@@ -41,7 +41,7 @@ int find_opcode(struct x86_instr * inst){
             i++; // REX must come before opcode
         }
 
-        printf("Reached opcode %x\n", bytes[i]);
+        inst->opcode[0] = bytes[i];
         inst->opcode_ptr = i;
         opcode_flag = 1;
         goto out;
@@ -66,26 +66,33 @@ int check_bit_mode(struct x86_instr * inst){
     return DEFAULT_BIT_MODE;
 }
 
-//void decode_rex(struct x86_instr * inst){
-//    if(inst->rex_ptr == -1)
-//        return NULL;
-//
-//    unsigned char rex_byte = inst->byte_code[inst->rex_ptr];
-//    struct prefix_rex * rex = (struct prefix_rex *)malloc(sizeof(struct prefix_rex));
-//    rex->w = rex->r = rex->x = rex->b = 0;
-//
-//    if(rex_byte & REX_W)
-//        rex->w = 1;
-//    if(rex_byte & REX_R)
-//        rex->r = 1;
-//    if(rex_byte & REX_X)
-//        rex->x = 1;
-//    if(rex_byte & REX_B)
-//        rex->b = 1;
-//
-//    return rex;
-//}
+int get_rex_w(struct x86_instr * inst){
+    unsigned char rex = inst->rex;
+    if(rex & REX_prefix != REX_prefix)
+        return 0;
+    return (rex & REX_W) >> 3;
+}
 
+int get_rex_r(struct x86_instr * inst){
+    unsigned char rex = inst->rex;
+    if(rex & REX_prefix != REX_prefix)
+        return 0;
+    return (rex & REX_R) >> 2;
+}
+
+int get_rex_x(struct x86_instr * inst){
+    unsigned char rex = inst->rex;
+    if(rex & REX_prefix != REX_prefix)
+        return 0;
+    return (rex & REX_X) >> 1;
+}
+
+int get_rex_b(struct x86_instr * inst){
+    unsigned char rex = inst->rex;
+    if(rex & REX_prefix != REX_prefix)
+        return 0;
+    return (rex & REX_B) >> 0;
+}
 // Group 1:
     // FO - LOCK prefix - exclusive use of shared memory in multiprocessor environ
     // F2 - REPNE/REPNZ (repeat not equal/zero) - repeat for each element of string or sometimes mandatory for instructions
