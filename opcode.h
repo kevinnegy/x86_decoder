@@ -15,7 +15,7 @@ enum opcodes{
     
 };
 
-void check_opcode(struct x86_instr * inst, int opcode_index);
+void check_opcode(struct x86_instr * inst);
 
 // In 2 byte mode, it must have one of the following (3 byte is the same except a third opcode):
     // escape opcode 0F primary opcode and then a second opcode

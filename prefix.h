@@ -37,4 +37,8 @@ enum prefixes{
 #define REX_X       (1 << 1)    // extension of SIB index field
 #define REX_B       (1 << 0)    // extension of ModR/M r/m field, SIB base field, or Opcode reg field ( how is this determined?, seems like based on if r or x are set.)
 
+int get_rex_w(struct x86_instr * inst);
+int get_rex_r(struct x86_instr * inst);
+int get_rex_x(struct x86_instr * inst);
+int get_rex_b(struct x86_instr * inst);
 #endif
