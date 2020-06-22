@@ -7,10 +7,13 @@ void set_bit_mode(int mode){
     switch(mode){
         case(16):
             DEFAULT_BIT_MODE = 16;
+            break;
         case(32):
             DEFAULT_BIT_MODE = 32;
+            break;
         case(64):
             DEFAULT_BIT_MODE = 64;
+            break;
         default:
             printf("%s: %s %d\n", __func__, "invalid bit mode", mode);
             printf("Setting default to 64\n");
@@ -64,6 +67,10 @@ struct x86_instr * create_x86_instr(char * bytes){
         printf("%s: %s\n", __func__, "inst->immediate malloc failed");
     }
 
+
+    inst->operands = (struct operands *) malloc(sizeof(struct operands));
+    inst->operands->num_operands = 0;
+
     // Start off array lens at 0
     inst->prefix_len = inst->opcode_len = inst->displacement_len = inst->immediate_len = 0; 
     
@@ -81,6 +88,9 @@ void delete_x86_instr(struct x86_instr * inst){
     free(inst->prefixes);
     free(inst->opcode);
     free(inst->displacement);
+    if(inst->operands->num_operands > 0)
+        free(inst->operands->operands); // Don't free strings in operands ** (see registers.h)
+    free(inst->operands);
     free(inst->immediate);
     free(inst->x86_string);
     free(inst);

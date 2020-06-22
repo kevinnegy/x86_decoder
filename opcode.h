@@ -12,10 +12,10 @@ enum opcodes{
     op_push = 0x50, // push is 50-57, last 3 bits are for register
     op_pusha = 0x60,
     op_popa = 0x61,
-    
+    op_sub = 0x83, 
 };
 
-void check_opcode(struct x86_instr * inst, int opcode_index);
+void check_opcode(struct x86_instr * inst);
 
 // In 2 byte mode, it must have one of the following (3 byte is the same except a third opcode):
     // escape opcode 0F primary opcode and then a second opcode

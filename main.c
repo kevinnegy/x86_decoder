@@ -13,14 +13,14 @@
 void test1(unsigned char * bytes){
     struct x86_instr * inst = create_x86_instr(bytes);
     int opcode_index = find_opcode(inst);
-    check_opcode(inst, opcode_index);
+    check_opcode(inst);
     
     int i = 0;
     for(i = 0; i<3; i++){
         printf("%2hhx ", inst->byte_code[i]);
     }
     printf("\n");
-    printf("my string:\n%s\n", inst->x86_string);
+    printf("%s\n", inst->x86_string);
     delete_x86_instr(inst);
 }
 
@@ -62,6 +62,12 @@ int main(){
     bytes[2] = 0xe5;
     test1(bytes);
     printf("push r15\n");
+
+    bytes[0] = 0x89;
+    bytes[1] = 0xc0;
+    bytes[2] = 0xe5;
+    test1(bytes);
+    printf("mov eax, eax\n");
 
     return 0;
 }
