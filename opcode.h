@@ -12,7 +12,7 @@ enum opcodes{
     op_push = 0x50, // push is 50-57, last 3 bits are for register
     op_pusha = 0x60,
     op_popa = 0x61,
-    
+    op_sub = 0x83, 
 };
 
 void check_opcode(struct x86_instr * inst);
