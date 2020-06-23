@@ -39,13 +39,12 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +1 registers.h
-badd +32 main.c
-badd +0 registers.c
+badd +0 modrm.h
+badd +0 modrm.c
 argglobal
 silent! argdel *
-$argadd registers.h
-edit registers.h
+$argadd modrm.h
+edit modrm.h
 set splitbelow splitright
 wincmd _ | wincmd |
 vsplit
@@ -171,15 +170,15 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 41 - ((0 * winheight(0) + 26) / 53)
+let s:l = 1 - ((0 * winheight(0) + 26) / 53)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-41
-normal! 022|
+1
+normal! 0
 wincmd w
 argglobal
-if bufexists('registers.c') | buffer registers.c | else | edit registers.c | endif
+if bufexists('modrm.c') | buffer modrm.c | else | edit modrm.c | endif
 setlocal keymap=
 setlocal noarabic
 setlocal noautoindent
