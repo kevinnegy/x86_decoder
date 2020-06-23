@@ -33,17 +33,43 @@ int main(){
     
     set_bit_mode(64);
 
+    // REG.W, mov op, and modrm registers
     bytes[0] = 0x48;
     bytes[1] = 0x89;
     bytes[2] = 0xe7;
     test1(bytes);
     printf("mov rdi, rsp\n");
 
+    // call op and displacement 
     bytes[0] = 0xe8;
     bytes[1] = 0x08;
     bytes[2] = 0x0e;
     test1(bytes);
-    printf("call 0x\n");
+    printf("call 0xe0d\n");
+
+    // call op and 64 bit negative displacement 
+    bytes[0] = 0xe8;
+    bytes[1] = 0x08;
+    bytes[2] = 0x0e;
+    bytes[3] = 0x0;
+    bytes[4] = 0xff;
+    test1(bytes);
+    printf("call 0xffffffffff000e0d\n");
+
+    // call op and 64 bit positive displacement 
+    bytes[0] = 0xe8;
+    bytes[1] = 0x08;
+    bytes[2] = 0x0e;
+    bytes[3] = 0x0;
+    bytes[4] = 0x7f;
+    test1(bytes);
+    printf("call 0x7f000e0d\n");
+
+    bytes[0] = 0xf;
+    bytes[1] = 0x31;
+    bytes[2] = 0x0e;
+    test1(bytes);
+    printf("rdtsc\n");
 
     bytes[0] = 0x40;
     bytes[1] = 0x55;
