@@ -6,10 +6,39 @@
 #include "modrm.h"
 #include "immediates.h"
 
+void check_third_byte_opcode(struct x86_instr * inst){;
+}
+
+void check_second_byte_opcode(struct x86_instr * inst){
+    if(inst == NULL){
+        printf("%s: %s\n", __func__, "instruction is null");
+        return;
+    }
+
+    inst->opcode[1] = inst->byte_code[inst->opcode_ptr + 1];
+    
+    if(inst->opcode[1] == 0x38 || inst->opcode[1] == 0x3a){
+        return check_third_byte_opcode(inst);
+    }
+
+    switch(inst->opcode[1]){
+    case(op_rdtsc):
+        strcat(inst->x86_string, "rdtsc");
+        return;
+    default:
+        printf("%s: %s %x\n", __func__, "second byte opcode invalid", inst->opcode[1]);
+    }
+    return;
+}
+
 // Assumes check_prefix has determined the correct opcode location
 void check_opcode(struct x86_instr * inst){
     // TODO handle more than 1 byte of opcode
     unsigned char opcode = inst->opcode[0]; 
+    if(opcode == 0xf){
+        return check_second_byte_opcode(inst);
+    }
+
     switch(opcode){
     case(op_call):
         strcat(inst->x86_string, "call ");
@@ -33,6 +62,30 @@ void check_opcode(struct x86_instr * inst){
         strcat(inst->x86_string, ", ");
         strcat(inst->x86_string, inst->operands->operands[0]);
         goto exit;
+    case(op_shl):
+        strcat(inst->x86_string, "shl ");
+        inst->modrm_ptr = inst->opcode_ptr + 1;
+        inst->modrm = inst->byte_code[inst->modrm_ptr];
+        
+        if(inst->rex_ptr == -1)
+            check_modrm(inst, 32); 
+        else
+            check_modrm(inst, 64);
+
+        // Get immediate
+        inst->immediate_ptr = inst->modrm_ptr + 1;
+        long long imm8 = get_immediate(inst, 8);
+        printf("immediate is %llx\n", imm8);
+        sprintf(inst->immediate, "0x%llx", imm8);
+        
+
+        strcat(inst->x86_string, inst->operands->operands[1]); 
+        strcat(inst->x86_string, ", ");
+        strcat(inst->x86_string, inst->immediate);
+
+        
+        goto exit;
+        
 
     case(op_sub):   // 83 \5 (use r/m not reg of modrm for register) and ib (immediate_8 byte)
         strcat(inst->x86_string, "sub ");

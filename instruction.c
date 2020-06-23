@@ -62,7 +62,7 @@ struct x86_instr * create_x86_instr(char * bytes){
     if(inst->displacement == NULL){
         printf("%s: %s\n", __func__, "inst->displacement malloc failed");
     }
-    inst->immediate = (unsigned char *) malloc(sizeof(unsigned char) * 4);  
+    inst->immediate = (unsigned char *) malloc(sizeof(unsigned char) * 11);  // 0x and 8 hex (10 total + '\0')
     if(inst->immediate == NULL){
         printf("%s: %s\n", __func__, "inst->immediate malloc failed");
     }
