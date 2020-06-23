@@ -65,6 +65,7 @@ int main(){
     test1(bytes);
     printf("call 0x7f000e0d\n");
 
+    // rdtsc has imm8
     bytes[0] = 0xf;
     bytes[1] = 0x31;
     bytes[2] = 0x0e;

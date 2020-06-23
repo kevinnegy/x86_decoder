@@ -8,7 +8,7 @@
 enum one_byte_opcodes{
     op_call = 0xe8,
     op_mov = 0x89,
-    op_mov_8b = 0x8b, 
+    op_mov_8b = 0x8b,
     op_or = 0x9,
     op_pop = 0x58, // pop is 58-5f, last 3 bits are for register
     op_push = 0x50, // push is 50-57, last 3 bits are for register
