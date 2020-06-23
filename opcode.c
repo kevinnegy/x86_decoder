@@ -4,6 +4,7 @@
 #include "prefix.h"
 #include "registers.h"
 #include "modrm.h"
+#include "immediates.h"
 
 // Assumes check_prefix has determined the correct opcode location
 void check_opcode(struct x86_instr * inst){
@@ -12,6 +13,12 @@ void check_opcode(struct x86_instr * inst){
     switch(opcode){
     case(op_call):
         strcat(inst->x86_string, "call ");
+        inst->displacement_ptr = inst->opcode_ptr + 1;
+        long long disp = get_displacement(inst, DEFAULT_BIT_MODE);
+        // relative displacement from next instruction; this call instruction is 5 bytes long; next instruction 5 bytes from now
+        disp = disp + 5; 
+        sprintf(inst->displacement, "0x%llx", disp);
+        strcat(inst->x86_string, inst->displacement);
         goto exit;
     case(op_mov):
         strcat(inst->x86_string, "mov ");
@@ -22,9 +29,9 @@ void check_opcode(struct x86_instr * inst){
         else
             check_modrm(inst, 64);
 
-        strcat(inst->x86_string, inst->operands->operands[0]);
-        strcat(inst->x86_string, ", ");
         strcat(inst->x86_string, inst->operands->operands[1]);
+        strcat(inst->x86_string, ", ");
+        strcat(inst->x86_string, inst->operands->operands[0]);
         goto exit;
 
     case(op_sub):   // 83 \5 (use r/m not reg of modrm for register) and ib (immediate_8 byte)
