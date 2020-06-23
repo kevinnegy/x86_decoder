@@ -41,29 +41,64 @@ void check_opcode(struct x86_instr * inst){
 
     switch(opcode){
     case(op_call):
-        strcat(inst->x86_string, "call ");
         inst->displacement_ptr = inst->opcode_ptr + 1;
         long long disp = get_displacement(inst, DEFAULT_BIT_MODE);
+
         // relative displacement from next instruction; this call instruction is 5 bytes long; next instruction 5 bytes from now
         disp = disp + 5; 
         sprintf(inst->displacement, "0x%llx", disp);
+
+        strcat(inst->x86_string, "call ");
         strcat(inst->x86_string, inst->displacement);
+
         goto exit;
     case(op_mov):
-        strcat(inst->x86_string, "mov ");
         inst->modrm_ptr = inst->opcode_ptr + 1;
         inst->modrm = inst->byte_code[inst->modrm_ptr];
+
         if(inst->rex_ptr == -1)
             check_modrm(inst, 32); 
         else
             check_modrm(inst, 64);
 
+        strcat(inst->x86_string, "mov ");
         strcat(inst->x86_string, inst->operands->operands[1]);
         strcat(inst->x86_string, ", ");
         strcat(inst->x86_string, inst->operands->operands[0]);
+
+        goto exit;
+    case(op_mov_8b):
+        inst->modrm_ptr = inst->opcode_ptr + 1;
+        inst->modrm = inst->byte_code[inst->modrm_ptr];
+
+        if(inst->rex_ptr == -1)
+            check_modrm(inst, 32); 
+        else
+            check_modrm(inst, 64);
+
+        strcat(inst->x86_string, "mov ");
+        strcat(inst->x86_string, inst->operands->operands[0]);
+        strcat(inst->x86_string, ", ");
+        strcat(inst->x86_string, inst->operands->operands[1]);
+
+        goto exit;
+
+    case(op_or):
+        inst->modrm_ptr = inst->opcode_ptr + 1;
+        inst->modrm = inst->byte_code[inst->modrm_ptr];
+
+        if(inst->rex_ptr == -1)
+            check_modrm(inst, 32); 
+        else
+            check_modrm(inst, 64);
+
+        strcat(inst->x86_string, "or ");
+        strcat(inst->x86_string, inst->operands->operands[1]);
+        strcat(inst->x86_string, ", ");
+        strcat(inst->x86_string, inst->operands->operands[0]);
+
         goto exit;
     case(op_shl):
-        strcat(inst->x86_string, "shl ");
         inst->modrm_ptr = inst->opcode_ptr + 1;
         inst->modrm = inst->byte_code[inst->modrm_ptr];
         
@@ -72,23 +107,19 @@ void check_opcode(struct x86_instr * inst){
         else
             check_modrm(inst, 64);
 
-        // Get immediate
         inst->immediate_ptr = inst->modrm_ptr + 1;
         long long imm8 = get_immediate(inst, 8);
-        printf("immediate is %llx\n", imm8);
         sprintf(inst->immediate, "0x%llx", imm8);
-        
 
+        strcat(inst->x86_string, "shl ");
         strcat(inst->x86_string, inst->operands->operands[1]); 
         strcat(inst->x86_string, ", ");
         strcat(inst->x86_string, inst->immediate);
 
-        
         goto exit;
         
 
     case(op_sub):   // 83 \5 (use r/m not reg of modrm for register) and ib (immediate_8 byte)
-        strcat(inst->x86_string, "sub ");
         inst->modrm_ptr = inst->opcode_ptr + 1;
         inst->modrm = inst->byte_code[inst->modrm_ptr];
         
@@ -97,13 +128,15 @@ void check_opcode(struct x86_instr * inst){
         else
             check_modrm(inst, 64);
 
-        strcat(inst->x86_string, inst->operands->operands[1]); 
-        strcat(inst->x86_string, ", ");
         inst->immediate_ptr = inst->modrm_ptr + 1;
         inst->immediate[0] = inst->byte_code[inst->immediate_ptr];
         unsigned char x = inst->immediate[0];
         char imm[5];
         sprintf(imm, "0x%x",x);
+
+        strcat(inst->x86_string, "sub ");
+        strcat(inst->x86_string, inst->operands->operands[1]); 
+        strcat(inst->x86_string, ", ");
         strcat(inst->x86_string, imm);
         
         goto exit;
@@ -116,9 +149,9 @@ void check_opcode(struct x86_instr * inst){
         index = index | (get_rex_b(inst) << 3);
         char * reg = get_register(index, 1, bit_mode); //TODO check for w bit?
 
-        // Build string
         strcat(inst->x86_string, "pop ");
         strcat(inst->x86_string, reg);
+
         goto exit;
     }
     else if(op_push <= opcode && opcode < op_push + 8){
@@ -128,7 +161,6 @@ void check_opcode(struct x86_instr * inst){
         index = index | (get_rex_b(inst) << 3);
         char * reg = get_register(index, 1, bit_mode); //TODO check for w bit?
         
-        // Build string
         strcat(inst->x86_string, "push ");
         strcat(inst->x86_string, reg);
         goto exit;
@@ -142,4 +174,7 @@ exit:
     return;
 }
 
+void two_regs_ops(struct x86_instr * inst, const char * op){
 
+    // mov, or
+}
