@@ -41,7 +41,7 @@ endif
 set shortmess=aoO
 badd +1 registers.h
 badd +32 main.c
-badd +0 registers.c
+badd +1 registers.c
 argglobal
 silent! argdel *
 $argadd registers.h
@@ -53,8 +53,8 @@ vsplit
 wincmd w
 wincmd t
 set winminheight=1 winheight=1 winminwidth=1 winwidth=1
-exe 'vert 1resize ' . ((&columns * 101 + 102) / 204)
-exe 'vert 2resize ' . ((&columns * 102 + 102) / 204)
+exe 'vert 1resize ' . ((&columns * 114 + 115) / 230)
+exe 'vert 2resize ' . ((&columns * 115 + 115) / 230)
 argglobal
 setlocal keymap=
 setlocal noarabic
@@ -171,7 +171,7 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 41 - ((0 * winheight(0) + 26) / 53)
+let s:l = 41 - ((0 * winheight(0) + 28) / 56)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -295,7 +295,7 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 26) / 53)
+let s:l = 1 - ((0 * winheight(0) + 28) / 56)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -303,8 +303,8 @@ normal! zt
 normal! 0
 wincmd w
 2wincmd w
-exe 'vert 1resize ' . ((&columns * 101 + 102) / 204)
-exe 'vert 2resize ' . ((&columns * 102 + 102) / 204)
+exe 'vert 1resize ' . ((&columns * 114 + 115) / 230)
+exe 'vert 2resize ' . ((&columns * 115 + 115) / 230)
 tabnext 1
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf

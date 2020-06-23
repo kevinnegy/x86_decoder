@@ -39,9 +39,9 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +0 instruction.h
-badd +0 instruction.c
-badd +0 x86_decoder.h
+badd +1 instruction.h
+badd +1 instruction.c
+badd +1 x86_decoder.h
 argglobal
 silent! argdel *
 $argadd instruction.h
@@ -57,11 +57,11 @@ wincmd w
 wincmd w
 wincmd t
 set winminheight=1 winheight=1 winminwidth=1 winwidth=1
-exe '1resize ' . ((&lines * 26 + 27) / 55)
-exe 'vert 1resize ' . ((&columns * 101 + 102) / 204)
-exe '2resize ' . ((&lines * 26 + 27) / 55)
-exe 'vert 2resize ' . ((&columns * 101 + 102) / 204)
-exe 'vert 3resize ' . ((&columns * 102 + 102) / 204)
+exe '1resize ' . ((&lines * 28 + 29) / 58)
+exe 'vert 1resize ' . ((&columns * 114 + 115) / 230)
+exe '2resize ' . ((&lines * 27 + 29) / 58)
+exe 'vert 2resize ' . ((&columns * 114 + 115) / 230)
+exe 'vert 3resize ' . ((&columns * 115 + 115) / 230)
 argglobal
 setlocal keymap=
 setlocal noarabic
@@ -178,11 +178,11 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 7 - ((6 * winheight(0) + 13) / 26)
+let s:l = 36 - ((21 * winheight(0) + 14) / 28)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-7
+36
 normal! 021|
 wincmd w
 argglobal
@@ -302,12 +302,12 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 22 - ((21 * winheight(0) + 13) / 26)
+let s:l = 22 - ((21 * winheight(0) + 13) / 27)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
 22
-normal! 011|
+normal! 0
 wincmd w
 argglobal
 if bufexists('instruction.c') | buffer instruction.c | else | edit instruction.c | endif
@@ -426,19 +426,19 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 17 - ((16 * winheight(0) + 26) / 53)
+let s:l = 65 - ((49 * winheight(0) + 28) / 56)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-17
-normal! 034|
+65
+normal! 079|
 wincmd w
-2wincmd w
-exe '1resize ' . ((&lines * 26 + 27) / 55)
-exe 'vert 1resize ' . ((&columns * 101 + 102) / 204)
-exe '2resize ' . ((&lines * 26 + 27) / 55)
-exe 'vert 2resize ' . ((&columns * 101 + 102) / 204)
-exe 'vert 3resize ' . ((&columns * 102 + 102) / 204)
+3wincmd w
+exe '1resize ' . ((&lines * 28 + 29) / 58)
+exe 'vert 1resize ' . ((&columns * 114 + 115) / 230)
+exe '2resize ' . ((&lines * 27 + 29) / 58)
+exe 'vert 2resize ' . ((&columns * 114 + 115) / 230)
+exe 'vert 3resize ' . ((&columns * 115 + 115) / 230)
 tabnext 1
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf
