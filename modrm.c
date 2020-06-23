@@ -2,19 +2,56 @@
 #include "registers.h"
 #include "prefix.h"
 #include <string.h>
+#include "immediates.h"
 
 static void check_modrm_64(struct x86_instr * inst){
     unsigned char modrm = inst->modrm;
     int op_1 = (modrm >> 3) & 0x7;
     int op_2 = modrm & 0x7;
     int w = 1; // TODO figure out if w bit exists
+
     switch(modrm >> 6){
         case(0):
-            // 0
+            // TODO handle 64bit
+            inst->operands->num_operands = 2;
+            inst->operands->operands = (char **) malloc (sizeof(char *) * 2);
+
+            inst->operands->operands[0] = get_register(op_1, w, 64);
+            if(op_2 == 4){
+                printf("%s: %s\n", __func__, "handle sib byte here"); 
+                return;
+            }
+
+            // TODO malloc operands[1] when does this get freed?
+            inst->operands->operands[1] = (char *) malloc (sizeof(char) * 5);  // 3 char reg and brackets
+
+            if(op_2 == 5){
+
+                // TODO handle negative/64 bit
+                // in 64 bit, this is [RIP + disp32] called RIP-relative addressing
+                inst->displacement_ptr = inst->modrm_ptr + 1;
+                unsigned long long disp = get_displacement(inst, 32);
+                char disp32[18];
+                sprintf(disp32, "0x%llx", disp);
+
+                strcat(inst->operands->operands[1], "[rip+");
+                strcat(inst->operands->operands[1], disp32 );
+                strcat(inst->operands->operands[1], "]");
+                return;
+            }
+
+            strcat(inst->operands->operands[1], "[ ");
+            strcat(inst->operands->operands[1], get_register(op_2, w, 64));
+            strcat(inst->operands->operands[1], " ]");
+            return;
         case(1):
             // 1
+            printf("1");
+            break;
         case(2):
             // 2
+            printf("2");
+            break;
         case(3): // No SIB, no REX.X bit
         {
             if(get_rex_x(inst) == 1){
