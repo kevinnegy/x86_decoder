@@ -7,6 +7,7 @@
 // Can be 1,2, or 3 bytes. A fourth can be in ModRM
 enum one_byte_opcodes{
     op_call = 0xe8,
+    op_lea = 0x8d, // load effective address
     op_mov = 0x89,
     op_mov_8b = 0x8b,
     op_or = 0x9,
@@ -16,6 +17,7 @@ enum one_byte_opcodes{
     op_popa = 0x61, // pop all
     op_shl = 0xc1, // shift logical left
     op_sub = 0x83, 
+    op_sub_2b = 0x2b, 
 };
 
 enum two_byte_opcodes{
