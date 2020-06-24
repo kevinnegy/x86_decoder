@@ -19,7 +19,4 @@ char * disassemble_x86_instr(char * bytes, int mode){
     return x86_string;
 }
 
-
-
-
 #endif

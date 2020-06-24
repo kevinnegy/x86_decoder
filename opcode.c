@@ -52,6 +52,23 @@ void check_opcode(struct x86_instr * inst){
         strcat(inst->x86_string, inst->displacement);
 
         goto exit;
+    case(op_lea):
+        inst->modrm_ptr = inst->opcode_ptr + 1;
+        inst->modrm = inst->byte_code[inst->modrm_ptr];
+
+        if(inst->rex_ptr == -1)
+            check_modrm(inst, 32); 
+        else
+            check_modrm(inst, 64);
+
+        strcat(inst->x86_string, "lea ");
+        strcat(inst->x86_string, inst->operands->operands[0]);
+        strcat(inst->x86_string, ", ");
+        strcat(inst->x86_string, inst->operands->operands[1]);
+
+        goto exit;
+
+
     case(op_mov):
         inst->modrm_ptr = inst->opcode_ptr + 1;
         inst->modrm = inst->byte_code[inst->modrm_ptr];
@@ -141,6 +158,22 @@ void check_opcode(struct x86_instr * inst){
         strcat(inst->x86_string, imm);
         
         goto exit;
+    case(op_sub_2b):
+        inst->modrm_ptr = inst->opcode_ptr + 1;
+        inst->modrm = inst->byte_code[inst->modrm_ptr];
+
+        if(inst->rex_ptr == -1)
+            check_modrm(inst, 32); 
+        else
+            check_modrm(inst, 64);
+
+        strcat(inst->x86_string, "sub ");
+        strcat(inst->x86_string, inst->operands->operands[0]);
+        strcat(inst->x86_string, ", ");
+        strcat(inst->x86_string, inst->operands->operands[1]);
+
+        goto exit;
+
     }
 
     if(op_pop <= opcode &&  opcode < op_pop + 8){
