@@ -14,6 +14,14 @@ enum regs_16{
     regs_16_bp = 0x5,
     regs_16_si = 0x6,
     regs_16_di = 0x7,
+    regs_16_r8w = 0x8,
+    regs_16_r9w = 0x9,
+    regs_16_r10w = 0xa,
+    regs_16_r11w = 0xb,
+    regs_16_r12w = 0xc,
+    regs_16_r13w = 0xd,
+    regs_16_r14w = 0xe,
+    regs_16_r15w = 0xf,
 };
 
 enum regs_32{
@@ -25,6 +33,15 @@ enum regs_32{
     regs_32_ebp = 0x5,
     regs_32_esi = 0x6,
     regs_32_edi = 0x7,
+    regs_32_r8d = 0x8,
+    regs_32_r9d = 0x9,
+    regs_32_r10d = 0xa,
+    regs_32_r11d = 0xb,
+    regs_32_r12d = 0xc,
+    regs_32_r13d = 0xd,
+    regs_32_r14d = 0xe,
+    regs_32_r15d = 0xf,
+    
 };
 
 enum regs_64{
@@ -48,15 +65,23 @@ enum regs_64{
 };
 
 // byte registers, w = 0 (required)
-enum byte_regs_16{
-    byte_regs_16_al = 0x0,
-    byte_regs_16_cl = 0x1,
-    byte_regs_16_dl = 0x2,
-    byte_regs_16_bl = 0x3,
-    byte_regs_16_ah = 0x4,
-    byte_regs_16_ch = 0x5,
-    byte_regs_16_dh = 0x6,
-    byte_regs_16_bh = 0x7,
+enum byte_regs{
+    byte_regs_al = 0x0,
+    byte_regs_cl = 0x1,
+    byte_regs_dl = 0x2,
+    byte_regs_bl = 0x3,
+    byte_regs_ah = 0x4,
+    byte_regs_ch = 0x5,
+    byte_regs_dh = 0x6,
+    byte_regs_bh = 0x7,
+    byte_regs_r8l = 0x8,
+    byte_regs_r9l = 0x9,
+    byte_regs_r10l = 0xa,
+    byte_regs_r11l = 0xb,
+    byte_regs_r12l = 0xc,
+    byte_regs_r13l = 0xd,
+    byte_regs_r14l = 0xe,
+    byte_regs_r15l = 0xf,
 };
 
 

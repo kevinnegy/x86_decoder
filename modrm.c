@@ -4,6 +4,7 @@
 #include <string.h>
 #include "immediates.h"
 
+// TODO can this be run safely in 32 bit mode if get_rex_() returns 0 in 32 bit mode?
 static void check_modrm_64(struct x86_instr * inst){
     unsigned char modrm = inst->modrm;
     int op_1 = (modrm >> 3) & 0x7;
@@ -12,11 +13,16 @@ static void check_modrm_64(struct x86_instr * inst){
 
     switch(modrm >> 6){
         case(0):
-            // TODO handle 64bit
+            op_1 = op_1 | (get_rex_r(inst) << 3); // Get extension bit from rex prefix
+            op_2 = op_2 | (get_rex_b(inst) << 3); // Get extension bit from rex prefix
+
             inst->operands->num_operands = 2;
             inst->operands->operands = (char **) malloc (sizeof(char *) * 2);
 
+            // First operand
             inst->operands->operands[0] = get_register(op_1, w, 64);
+
+            // Second operand
             if(op_2 == 4){
                 printf("%s: %s\n", __func__, "handle sib byte here"); 
                 return;
@@ -40,6 +46,7 @@ static void check_modrm_64(struct x86_instr * inst){
                 return;
             }
 
+
             strcat(inst->operands->operands[1], "[ ");
             strcat(inst->operands->operands[1], get_register(op_2, w, 64));
             strcat(inst->operands->operands[1], " ]");
@@ -61,7 +68,6 @@ static void check_modrm_64(struct x86_instr * inst){
             op_1 = op_1 | (get_rex_r(inst) << 3); // Get extension bit from rex prefix
             op_2 = op_2 | (get_rex_b(inst) << 3); // Get extension bit from rex prefix
              
-            // TODO Get extended bits from REX prefix
             inst->operands->num_operands = 2;
             inst->operands->operands = (char **) malloc (sizeof(char *) * 2);
             if(inst->operands->operands == NULL){
