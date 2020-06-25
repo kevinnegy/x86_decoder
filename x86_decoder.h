@@ -5,6 +5,7 @@
 #include "prefix.h"
 #include "opcode.h"
 #include "modrm.h"
+#include <string.h>
 
 char * disassemble_x86_instr(char * bytes, int mode){
     set_bit_mode(mode);
