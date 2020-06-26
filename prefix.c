@@ -4,23 +4,24 @@
 
 int check_prefix(u_int8_t byte){
         switch(byte){
-        case(PREFIX_LOCK):
-        case(PREFIX_REPN): // Must also include bnd
-        case(PREFIX_REP):
-        case(PREFIX_CS): // Must include branchn
-        case(PREFIX_SS):
-        case(PREFIX_DS): // Must include branch
-        case(PREFIX_ES):
-        case(PREFIX_FS):
-        case(PREFIX_GS):
-        case(PREFIX_OP_SIZE_OVERRIDE):
-        case(PREFIX_ADDR_SIZE_OVERRIDE):
+        case PREFIX_LOCK:
+        case PREFIX_REPN: // Must also include bnd
+        case PREFIX_REP:
+        case PREFIX_CS: // Must include branchn
+        case PREFIX_SS:
+        case PREFIX_DS: // Must include branch
+        case PREFIX_ES:
+        case PREFIX_FS:
+        case PREFIX_GS:
+        case PREFIX_OP_SIZE_OVERRIDE:
+        case PREFIX_ADDR_SIZE_OVERRIDE:
             return 1;
         }
     return 0;
 }
 
 int check_rex(u_int8_t byte){
+    printf("%x rex\n", byte);
     return (byte & 0xf0) == REX_PREFIX; // Clear last 4 bits 
 }
 
