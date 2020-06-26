@@ -2,7 +2,6 @@
 #define x86_DECODER_H
 
 #include "instruction.h"
-#include "decode.h"
 
 void disassemble_x86_instr(char * bytes, int mode){
     if(bytes == NULL){

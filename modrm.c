@@ -1,8 +1,8 @@
+#include <string.h>
 #include "modrm.h"
 #include "registers.h"
-#include <string.h>
 #include "immediates.h"
-#include "decoder.h"
+#include "instruction.h"
 
 void check_modrm_reg(unsigned char * inst, int opcode_index){}
 void check_modrm_rm(unsigned char * inst, int opcode_index){}

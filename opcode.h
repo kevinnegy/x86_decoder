@@ -1,8 +1,6 @@
 #ifndef OPCODE_H
 #define OPCODE_H
 
-#include "instruction.h"
-
 /** Opcodes **/
 // Can be 1,2, or 3 bytes. A fourth can be in ModRM
 enum one_byte_opcodes{

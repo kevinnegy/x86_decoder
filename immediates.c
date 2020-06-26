@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include "immediates.h"
-#include "decoder.h"
 #include <assert.h>
+#include "immediates.h"
+#include "instruction.h"
 
 unsigned long long extend_sign_64(u_int32_t num){
     unsigned long long sign_32 = 0x1 & (num >> 31);

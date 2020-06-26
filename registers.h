@@ -1,6 +1,5 @@
 #ifndef REGISTERS_H
 #define REGISTERS_H
-#include <stdio.h>
 
 // Registers are stored in 3 bits
 

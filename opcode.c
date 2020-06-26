@@ -1,8 +1,8 @@
-#include "opcode.h"
-#include "decoder.h"
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include "opcode.h"
+#include "instruction.h"
 #include "immediates.h"
 #include "modrm.h"
 

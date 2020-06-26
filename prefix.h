@@ -1,8 +1,6 @@
 #ifndef PREFIX_H
 #define PREFIX_H
 
-#include "instruction.h"
-
 /** Prefixes **/
 int check_prefix(u_int8_t byte);
 int check_rex(u_int8_t byte);

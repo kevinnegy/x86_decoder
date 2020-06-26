@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "decoder.h"
 #include "instruction.h"
 
 //MOV

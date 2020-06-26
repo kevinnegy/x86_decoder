@@ -1,6 +1,6 @@
-#include "prefix.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "prefix.h"
 
 int check_prefix(u_int8_t byte){
         switch(byte){

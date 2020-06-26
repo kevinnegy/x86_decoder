@@ -1,7 +1,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include "instruction.h"
+#include "prefix.h"
+#include "opcode.h"
+
+u_int8_t get_byte(unsigned char * inst, int byte){
+    return (u_int8_t) inst[byte];
+}
+
+void decoder(unsigned char * inst){
+    assert(inst != NULL); 
+    u_int8_t byte;
+    void * bytes;
+    int prefix_exists = 1, rex_exists;
+    int byte_num = -1;
+    
+    while(prefix_exists){
+        // Check next byte
+        byte_num++;
+        byte = get_byte(inst, byte_num);
+        prefix_exists = check_prefix(byte);
+    }
+
+    rex_exists = check_rex(byte);
+    if(rex_exists)
+        check_rex_inst(inst, byte_num);
+    else
+        check_inst(inst, byte_num);
+}
 
 void set_bit_mode(int mode){
     switch(mode){
