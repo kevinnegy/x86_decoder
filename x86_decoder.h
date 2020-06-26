@@ -10,7 +10,7 @@ void disassemble_x86_instr(char * bytes, int mode){
     }
 
     set_bit_mode(mode);
-    decode(bytes);
+    decode_x86_inst(bytes);
     return;
 }
 

@@ -45,6 +45,6 @@ struct disp_imm{
 // bytes should be stored as unsigned char, 2 digit hexadecimals
 
 void set_bit_mode(int mode);
-void decoder(unsigned char * inst);
+void decode_x86_inst(unsigned char * inst);
 
 #endif

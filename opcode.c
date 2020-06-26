@@ -6,17 +6,17 @@
 #include "immediates.h"
 #include "modrm.h"
 
-void check_third_byte_opcode(unsigned char * inst, int rex_index){;
+void check_third_opcode(unsigned char * inst, int rex_index){;
 }
 
 
-void check_second_byte_opcode(unsigned char * inst, int opcode_index){
+void check_second_opcode(unsigned char * inst, int opcode_index){
     assert(inst != NULL);
 
     int opcode = inst[opcode_index + 1];
     
     if(opcode == 0x38 || opcode == 0x3a){
-        return check_third_byte_opcode(inst, opcode_index);
+        return check_third_opcode(inst, opcode_index);
     }
 
     switch(opcode){
@@ -41,11 +41,11 @@ void check_second_byte_opcode(unsigned char * inst, int opcode_index){
     return;
 }
 
-void check_inst(unsigned char * inst, int opcode_index){
+void check_opcode(unsigned char * inst, int opcode_index){
     u_int8_t opcode = inst[opcode_index]; 
 
     if(opcode == 0xf){
-        return check_second_byte_opcode(inst, opcode_index);
+        return check_second_opcode(inst, opcode_index);
     }
 
     switch(opcode){
@@ -82,16 +82,16 @@ void check_inst(unsigned char * inst, int opcode_index){
     return;
 }
 
-void check_third_byte_opcode_rex(unsigned char * inst, int rex_index){;
+void check_third_opcode_rex(unsigned char * inst, int rex_index){;
 }
 
-void check_second_byte_opcode_rex(unsigned char * inst, int rex_index){
+void check_second_opcode_rex(unsigned char * inst, int rex_index){
     assert(inst != NULL);
 
     int opcode = inst[rex_index + 2];
     
     if(opcode == 0x38 || opcode == 0x3a){
-        return check_third_byte_opcode_rex(inst, rex_index);
+        return check_third_opcode_rex(inst, rex_index);
     }
 
     switch(opcode){
@@ -101,11 +101,11 @@ void check_second_byte_opcode_rex(unsigned char * inst, int rex_index){
     return;
 }
 
-void check_rex_inst(unsigned char * inst, int rex_index){
+void check_opcode_rex(unsigned char * inst, int rex_index){
     u_int8_t opcode = inst[rex_index + 1]; 
 
     if(opcode == 0xf){
-        return check_second_byte_opcode_rex(inst, rex_index);
+        return check_second_opcode_rex(inst, rex_index);
     }
 
     switch(opcode){
@@ -141,5 +141,3 @@ void check_rex_inst(unsigned char * inst, int rex_index){
     }
     return;
 }
-
-void one_operand_op(unsigned char * inst){}

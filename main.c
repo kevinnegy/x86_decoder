@@ -13,7 +13,7 @@ void test1(unsigned char * bytes){
     for(i = 0; i< 3; i++)
         printf("%x ", bytes[i]);
     printf("\n");
-    decoder(bytes);
+    decode_x86_inst(bytes);
 }
 
 int main(){

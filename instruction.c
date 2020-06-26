@@ -10,8 +10,9 @@ u_int8_t get_byte(unsigned char * inst, int byte){
     return (u_int8_t) inst[byte];
 }
 
-void decoder(unsigned char * inst){
+void decode_x86_inst(unsigned char * inst){
     assert(inst != NULL); 
+
     u_int8_t byte;
     void * bytes;
     int prefix_exists = 1, rex_exists;
@@ -26,9 +27,9 @@ void decoder(unsigned char * inst){
 
     rex_exists = check_rex(byte);
     if(rex_exists)
-        check_rex_inst(inst, byte_num);
+        check_opcode_rex(inst, byte_num);
     else
-        check_inst(inst, byte_num);
+        check_opcode(inst, byte_num);
 }
 
 void set_bit_mode(int mode){
