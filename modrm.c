@@ -4,13 +4,24 @@
 #include "immediates.h"
 #include "instruction.h"
 
-void check_modrm_reg(unsigned char * inst, int opcode_index){}
-void check_modrm_rm(unsigned char * inst, int opcode_index){}
-void check_rex_modrm_reg(unsigned char * inst, int rex_index){}
-void check_rex_modrm_rm(unsigned char * inst, int rex_index){}
+void check_modrm_reg(unsigned char * inst, int opcode_index){
+    return;
+}
+
+void check_modrm_rm(unsigned char * inst, int opcode_index){
+    return;
+}
+
+void check_rex_modrm_reg(unsigned char * inst, int rex_index){
+    return;
+}
+
+void check_rex_modrm_rm(unsigned char * inst, int rex_index){
+    return;
+}
 
 void check_modrm_inst(unsigned char *inst, int opcode_index){
-    struct one_modrm * mold = (struct one_modrm *) &inst[opcode_index];
+    struct one_op_modrm * mold = (struct one_op_modrm *) &inst[opcode_index];
     int bit_mode = 32; //TODO check w bit to determine what mode/ handle 16 bit case
     switch(mold->modrm){
         case 0:
@@ -26,10 +37,11 @@ void check_modrm_inst(unsigned char *inst, int opcode_index){
             // both operands are registers
             break;
     }
+    return;
 }
 
 void check_rex_modrm_inst(unsigned char * inst, int rex_index){
-    struct rex_one_modrm * mold = (struct rex_one_modrm *) &inst[rex_index];
+    struct rex_one_op_modrm * mold = (struct rex_one_op_modrm *) &inst[rex_index];
     int reg = mold->reg;
     int rm = mold->rm;
 

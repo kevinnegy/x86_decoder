@@ -24,7 +24,7 @@ unsigned long long calc_displacement(unsigned char * displacement, int num_bytes
 
 // Largest possible return is 64 bits. Each instruction can typecast back
 unsigned long long get_displacement(unsigned char * inst, int op_byte_num, int disp_len, int instr_len){
-    struct disp_imm * mold = (struct disp_imm *) &inst[op_byte_num];
+    struct one_op_disp_imm * mold = (struct one_op_disp_imm *) &inst[op_byte_num];
     unsigned long long disp;
     switch(disp_len){
         case 8:
@@ -52,7 +52,7 @@ static unsigned long long calc_immediate(unsigned char * immediate, int num_byte
 }
 
 unsigned long long get_immediate(unsigned char * inst, int op_byte_num, int imm_len){
-    struct disp_imm * mold = (struct disp_imm *) &inst[op_byte_num];
+    struct one_op_disp_imm * mold = (struct one_op_disp_imm *) &inst[op_byte_num];
     switch(imm_len){
         case(8): // 1 bytes to read
             return calc_immediate(inst, 1);

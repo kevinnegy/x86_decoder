@@ -6,7 +6,8 @@
 #include "immediates.h"
 #include "modrm.h"
 
-void check_third_opcode(unsigned char * inst, int rex_index){;
+void check_third_opcode(unsigned char * inst, int rex_index){
+    return;
 }
 
 
@@ -82,7 +83,8 @@ void check_opcode(unsigned char * inst, int opcode_index){
     return;
 }
 
-void check_third_opcode_rex(unsigned char * inst, int rex_index){;
+void check_third_opcode_rex(unsigned char * inst, int rex_index){
+    return;
 }
 
 void check_second_opcode_rex(unsigned char * inst, int rex_index){

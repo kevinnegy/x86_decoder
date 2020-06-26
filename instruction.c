@@ -14,12 +14,9 @@ void decode_x86_inst(unsigned char * inst){
     assert(inst != NULL); 
 
     u_int8_t byte;
-    void * bytes;
-    int prefix_exists = 1, rex_exists;
-    int byte_num = -1;
+    int rex_exists, prefix_exists = 1, byte_num = -1;
     
     while(prefix_exists){
-        // Check next byte
         byte_num++;
         byte = get_byte(inst, byte_num);
         prefix_exists = check_prefix(byte);
@@ -30,17 +27,18 @@ void decode_x86_inst(unsigned char * inst){
         check_opcode_rex(inst, byte_num);
     else
         check_opcode(inst, byte_num);
+    return;
 }
 
 void set_bit_mode(int mode){
     switch(mode){
-        case(16):
+        case 16:
             DEFAULT_BIT_MODE = 16;
             break;
-        case(32):
+        case 32:
             DEFAULT_BIT_MODE = 32;
             break;
-        case(64):
+        case 64:
             DEFAULT_BIT_MODE = 64;
             break;
         default:
@@ -48,6 +46,7 @@ void set_bit_mode(int mode){
             fprintf(stderr, "Setting default to 64\n");
             DEFAULT_BIT_MODE = 64;
     }
+    return;
 }
 
 
