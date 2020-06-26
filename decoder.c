@@ -115,18 +115,15 @@ void decoder(unsigned char * inst){
         // Check next byte
         byte_num++;
         byte = get_byte(inst, byte_num);
-        printf("next byte %x\n", byte);
         prefix_exists = check_prefix(byte);
     }
 
     rex_exists = check_rex(byte);
-    if(rex_exists){
+    if(rex_exists)
         check_rex_inst(inst, byte_num);
-    }
     else
         check_inst(inst, byte_num);
 
-    printf("Does rex exist %d\n", rex_exists);
     
     
     

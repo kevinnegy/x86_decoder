@@ -112,23 +112,26 @@ struct rex_one_modrm{
     u_int8_t rex_b: 1;
     u_int8_t opcode: 8;
     u_int8_t modrm: 2;
-    u_int8_t modrm_reg: 3;
-    u_int8_t modrm_rm: 3;
+    u_int8_t reg: 3;
+    u_int8_t rm: 3;
 };
 
 struct one_modrm{
     u_int8_t opcode: 8;
     u_int8_t modrm: 2;
-    u_int8_t modrm_reg: 3;
-    u_int8_t modrm_rm: 3;
+    u_int8_t reg: 3;
+    u_int8_t rm: 3;
 };
 
-struct one_disp{
+struct disp_imm{
     u_int8_t opcode: 8;
     union{
-        u_int8_t disp8: 8;
-        u_int16_t disp16: 16;
-        u_int32_t disp32: 32;
+        unsigned char disp8[1];
+        unsigned char disp16[2];
+        unsigned char disp32[4];
+        unsigned char imm8[1];
+        unsigned char imm16[2];
+        unsigned char imm32[4];
     };
 };
 

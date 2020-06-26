@@ -22,13 +22,13 @@ static char * get_byte_register(int index){
     return strings[index];
 }
 
-char * get_register(int index, int w, int mode){
+char * get_register(int index, int mode){
     if(index < 0 || index > 15){
         printf("%s: %s\n", __func__, "register out of range");
         return NULL;
     }
 
-    if(w == 0 && mode != 64)
+    if(mode == 8)
         return get_byte_register(index);
     else if(mode == 16)
         return get_register_16(index);

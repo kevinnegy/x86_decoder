@@ -4,7 +4,7 @@ all: x86
 # must go after "all" target so that make -> make all instead of something else 
 include .depend  # Must include, otherwise.dependency file could be made, but not used in the makefile itself
 
-src = decoder.c main.c prefix.c opcode.c #$(wildcard *.c) # Find all .c files in current directory
+src = $(wildcard *.c) # Find all .c files in current directory
 obj = $(src:.c=.o) # take all .c files and rename them as .o files
 header = $(obj:.o=.h) 
 

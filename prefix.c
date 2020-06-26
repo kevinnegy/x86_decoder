@@ -5,11 +5,11 @@
 int check_prefix(u_int8_t byte){
         switch(byte){
         case PREFIX_LOCK:
-        case PREFIX_REPN: // Must also include bnd
+        case PREFIX_REPN: // BND shares this same prefix number  
         case PREFIX_REP:
-        case PREFIX_CS: // Must include branchn
+        case PREFIX_CS: // BRANCHN shares prefix
         case PREFIX_SS:
-        case PREFIX_DS: // Must include branch
+        case PREFIX_DS: // BRANCH shares prefix
         case PREFIX_ES:
         case PREFIX_FS:
         case PREFIX_GS:
@@ -21,7 +21,6 @@ int check_prefix(u_int8_t byte){
 }
 
 int check_rex(u_int8_t byte){
-    printf("%x rex\n", byte);
     return (byte & 0xf0) == REX_PREFIX; // Clear last 4 bits 
 }
 

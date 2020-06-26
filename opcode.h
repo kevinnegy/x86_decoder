@@ -12,7 +12,7 @@ enum one_byte_opcodes{
     OP_LEA = 0x8d, // load effective address
     OP_MOV = 0x89,
     OP_MOV_8B = 0x8b,
-    OP_MOV_B8 = 0xb8, // mov uses last 3 bits for register, b8-bf
+    OP_MOV_B8 = 0xb8, // mov uses last 3 bits for register, b8-bf, moves imm to reg
     OP_OR = 0x9,
     OP_POP = 0x58, // pop is 58-5f, last 3 bits are for register
     OP_PUSH = 0x50, // push is 50-57, last 3 bits are for register
@@ -30,7 +30,7 @@ enum two_byte_opcodes{
 };
 
 void check_rex_inst(unsigned char * inst, int rex_index);
-void check_inst(unsigned char * inst, int byte_num);
+void check_inst(unsigned char * inst, int opcode_index);
 
 // In 2 byte mode, it must have one of the following (3 byte is the same except a third opcode):
     // escape opcode 0F primary opcode and then a second opcode

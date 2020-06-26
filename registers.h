@@ -85,7 +85,7 @@ enum byte_regs{
 };
 
 
-char * get_register(int index, int w, int mode);
+char * get_register(int index, int mode);
 
 #endif 
 

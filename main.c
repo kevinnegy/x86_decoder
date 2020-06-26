@@ -23,6 +23,7 @@ int main(){
         printf("malloc failed in main()\n");
         return -1;
     }
+    set_bit_mode(64);
     
     // REG.W, mov op, and modrm registers
     bytes[0] = 0x48;
