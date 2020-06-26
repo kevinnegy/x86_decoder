@@ -6,27 +6,27 @@
 /** Opcodes **/
 // Can be 1,2, or 3 bytes. A fourth can be in ModRM
 enum one_byte_opcodes{
-    op_add_01 = 0x1,
-    op_call = 0xe8,
-    op_jmp_eb = 0xeb,
-    op_lea = 0x8d, // load effective address
-    op_mov = 0x89,
-    op_mov_8b = 0x8b,
-    op_mov_b8 = 0xb8, // mov uses last 3 bits for register, b8-bf
-    op_or = 0x9,
-    op_pop = 0x58, // pop is 58-5f, last 3 bits are for register
-    op_push = 0x50, // push is 50-57, last 3 bits are for register
-    op_pusha = 0x60, // push all 
-    op_popa = 0x61, // pop all
-    op_shl = 0xc1, // shift logical left
-    op_sub = 0x83, 
-    op_sub_2b = 0x2b, 
-    op_test_85 = 0x85, // test = reg_1 & reg_2 -> SF, ZF, PF flags
+    OP_ADD_01 = 0x1,
+    OP_CALL = 0xe8,
+    OP_JMP_EB = 0xeb,
+    OP_LEA = 0x8d, // load effective address
+    OP_MOV = 0x89,
+    OP_MOV_8B = 0x8b,
+    OP_MOV_B8 = 0xb8, // mov uses last 3 bits for register, b8-bf
+    OP_OR = 0x9,
+    OP_POP = 0x58, // pop is 58-5f, last 3 bits are for register
+    OP_PUSH = 0x50, // push is 50-57, last 3 bits are for register
+    OP_PUSHA = 0x60, // push all 
+    OP_POPA = 0x61, // pop all
+    OP_SHL = 0xc1, // shift logical left
+    OP_SUB = 0x83, 
+    OP_SUB_2B = 0x2b, 
+    OP_TEST_85 = 0x85, // test = reg_1 & reg_2 -> SF, ZF, PF flags
 };
 
 enum two_byte_opcodes{
-    op_jzje_84 = 0x84, // jump if equal or zero (meaning if zf flag = 1)
-    op_rdtsc = 0x31, // read time stamp counter
+    OP_JZJE_84 = 0x84, // jump if equal or zero (meaning if zf flag = 1)
+    OP_RDTSC = 0x31, // read time stamp counter
 };
 
 void check_opcode(struct x86_instr * inst);

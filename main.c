@@ -1,8 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include "decoder.h"
 #include "instruction.h"
-#include "prefix.h"
-#include "opcode.h"
 
 //MOV
 //                        100 - rsp 111 - rdi (mov rdi to rsp)
@@ -11,17 +10,11 @@
 //         
 
 void test1(unsigned char * bytes){
-    struct x86_instr * inst = create_x86_instr(bytes);
-    int opcode_index = find_opcode(inst);
-    check_opcode(inst);
-    
     int i = 0;
-    for(i = 0; i<3; i++){
-        printf("%2hhx ", inst->byte_code[i]);
-    }
+    for(i = 0; i< 3; i++)
+        printf("%x ", bytes[i]);
     printf("\n");
-    printf("%s\n", inst->x86_string);
-    delete_x86_instr(inst);
+    decoder(bytes);
 }
 
 int main(){
@@ -31,8 +24,6 @@ int main(){
         return -1;
     }
     
-    set_bit_mode(64);
-
     // REG.W, mov op, and modrm registers
     bytes[0] = 0x48;
     bytes[1] = 0x89;

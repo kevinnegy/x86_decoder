@@ -39,7 +39,7 @@ void check_second_byte_opcode(struct x86_instr * inst){
     }
 
     switch(inst->opcode[1]){
-    case(op_jzje_84): //TODO are tttn encodings necessary?
+    case(OP_JZJE_84): //TODO are tttn encodings necessary?
         inst->displacement_ptr = inst->opcode_ptr + 2;
         long long disp = get_displacement(inst, DEFAULT_BIT_MODE);
 
@@ -56,7 +56,7 @@ void check_second_byte_opcode(struct x86_instr * inst){
 
         return;
 
-    case(op_rdtsc):
+    case(OP_RDTSC):
         strcat(inst->x86_string, "rdtsc");
         return;
 
@@ -76,10 +76,10 @@ void check_opcode(struct x86_instr * inst){
     }
 
     switch(opcode){
-    case(op_add_01):
+    case(OP_ADD_01):
         two_operand_op(inst, "add ", 1);
         return;
-    case(op_call):
+    case(OP_CALL):
         inst->displacement_ptr = inst->opcode_ptr + 1;
         long long disp = get_displacement(inst, DEFAULT_BIT_MODE);
 
@@ -92,7 +92,7 @@ void check_opcode(struct x86_instr * inst){
 
         return;
 
-    case(op_jmp_eb):
+    case(OP_JMP_EB):
     {
         inst->displacement_ptr = inst->opcode_ptr + 1;
         unsigned int disp = get_displacement(inst, 8);
@@ -105,23 +105,23 @@ void check_opcode(struct x86_instr * inst){
         
     }
 
-    case(op_lea):
+    case(OP_LEA):
         two_operand_op(inst, "lea ", 0);
         return;
 
-    case(op_mov):
+    case(OP_MOV):
         two_operand_op(inst, "mov ", 1);
         return;
 
-    case(op_mov_8b):
+    case(OP_MOV_8B):
         two_operand_op(inst, "mov ", 0);
         return;
 
-    case(op_or):
+    case(OP_OR):
         two_operand_op(inst, "or ", 1);
         return;
 
-    case(op_shl):
+    case(OP_SHL):
     { 
         int bit_mode = check_bit_mode(inst);
 
@@ -140,7 +140,7 @@ void check_opcode(struct x86_instr * inst){
 
         return;
     }
-    case(op_sub):   // 83 \5 (use r/m not reg of modrm for register) and ib (immediate_8 byte)
+    case(OP_SUB):   // 83 \5 (use r/m not reg of modrm for register) and ib (immediate_8 byte)
     {
         int bit_mode = check_bit_mode(inst);
 
@@ -161,16 +161,16 @@ void check_opcode(struct x86_instr * inst){
         
         return;
     }
-    case(op_sub_2b):
+    case(OP_SUB_2B):
         two_operand_op(inst, "sub ", 0);
         return;
 
-    case(op_test_85):
+    case(OP_TEST_85):
         two_operand_op(inst, "test ", 1);
         return;
     }
 
-    if(op_mov_b8 <= opcode && opcode < op_mov_b8 + 8){
+    if(OP_MOV_B8 <= opcode && opcode < OP_MOV_B8 + 8){
         // Get register from opcode
         int bit_mode = check_bit_mode(inst);
         if(inst->rex_ptr == -1 || !(inst->rex & REX_W))
@@ -192,7 +192,7 @@ void check_opcode(struct x86_instr * inst){
         strcat(inst->x86_string, inst->immediate);
         return;
     } 
-    else if(op_pop <= opcode &&  opcode < op_pop + 8){
+    else if(OP_POP <= opcode &&  opcode < OP_POP + 8){
 
         int bit_mode = check_bit_mode(inst);
         int index = opcode & 0x7;
@@ -205,7 +205,7 @@ void check_opcode(struct x86_instr * inst){
 
         return;
     }
-    else if(op_push <= opcode && opcode < op_push + 8){
+    else if(OP_PUSH <= opcode && opcode < OP_PUSH + 8){
 
         int bit_mode = check_bit_mode(inst);
         int index = opcode & 0x7;
