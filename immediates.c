@@ -3,29 +3,24 @@
 #include "immediates.h"
 #include "instruction.h"
 
-unsigned long long extend_sign_64(u_int32_t num){
-    unsigned long long sign_32 = 0x1 & (num >> 31);
+// Use signed ints because displacement can be positive or negative in relative addressing
+int32_t calc_displacement(unsigned char * displacement, int num_bytes){
+    assert(num_bytes <= 4); // Displacement can be no more than 4 bytes
 
-    if(sign_32 == 0) // positive sign extend 
-        return (sign_32 << 63) + (num & 0x7fffffff);
-
-    return 0xffffffff00000000 + num; // negative sign extend
-}
-
-unsigned long long calc_displacement(unsigned char * displacement, int num_bytes){
     int i = 0;
-    unsigned long long disp = 0;
+    int32_t disp = 0;
     for(i = 0; i< num_bytes; i++){
         unsigned char byte = displacement[i];
-        disp = disp + ((unsigned long long)byte << (i*8));  // little endian!
+        disp = disp + ((int32_t)byte << (i*8));  // little endian!
     } 
+
     return disp; 
 }
 
 // Largest possible return is 64 bits. Each instruction can typecast back
-unsigned long long get_displacement(unsigned char * inst, int op_byte_num, int disp_len, int instr_len){
+int64_t get_displacement(unsigned char * inst, int op_byte_num, int disp_len, int instr_len){
     struct one_op_disp_imm * mold = (struct one_op_disp_imm *) &inst[op_byte_num];
-    unsigned long long disp;
+
     switch(disp_len){
         case 8:
             return calc_displacement(mold->disp8, 1) + instr_len;
@@ -34,7 +29,7 @@ unsigned long long get_displacement(unsigned char * inst, int op_byte_num, int d
         case 32:
             return calc_displacement(mold->disp32, 4) + instr_len;
         case 64:
-            return extend_sign_64(calc_displacement(mold->disp32, 4)) + instr_len;
+            return (int64_t)(calc_displacement(mold->disp32, 4)) + instr_len; // Sign extend 32 to 64 bits
         default:
             assert(0);
     }

@@ -9,7 +9,7 @@ enum prefixes{
     PREFIX_LOCK = 0xf0,
     PREFIX_REPN = 0xf2,
     PREFIX_REP = 0xf3,
-    PREFIX_BND = 0xf2, // TODO This is an iff prefix
+    PREFIX_BND = 0xf2, // TODO shares same hex value as REPN 
 
     PREFIX_CS = 0x2e, 
     PREFIX_SS = 0x36, 
@@ -17,8 +17,8 @@ enum prefixes{
     PREFIX_ES = 0x26, 
     PREFIX_FS = 0x64, 
     PREFIX_GS = 0x65, 
-    PREFIX_BRANCHN = 0x2e, // TODO another weird repeat
-    PREFIX_BRANCH = 0x3e, // TODO another weird repeat
+    PREFIX_BRANCHN = 0x2e, // TODO shares same hex value as CS 
+    PREFIX_BRANCH = 0x3e, // TODO shares same hex as DS 
 
     PREFIX_OP_SIZE_OVERRIDE = 0x66,
     PREFIX_ADDR_SIZE_OVERRIDE = 0x67,

@@ -23,13 +23,13 @@ void check_second_opcode(unsigned char * inst, int opcode_index){
     switch(opcode){
         case OP_JZJE_84: //TODO are tttn encodings necessary?
         {
-            unsigned long long disp = get_displacement(inst, opcode_index + 2, DEFAULT_BIT_MODE, 0);
+            int64_t disp = get_displacement(inst, opcode_index + 2, DEFAULT_BIT_MODE, 0);
 
             if(DEFAULT_BIT_MODE == 16)
                 disp = disp + 4; //TODO test
             else
                 disp = disp + 6; 
-            printf("disp 0x%llx\n", disp);
+            printf("disp 0x%lx\n", disp);
 
             return;
         }
@@ -54,10 +54,10 @@ void check_opcode(unsigned char * inst, int opcode_index){
             check_modrm_inst(inst, opcode_index);
             return;
         case OP_CALL_E8:
-            printf("disp 0x%llx\n", get_displacement(inst, opcode_index, DEFAULT_BIT_MODE, 5));
+            printf("disp 0x%lx\n", get_displacement(inst, opcode_index, DEFAULT_BIT_MODE, 5));
             return;
         case OP_JMP_EB:
-            printf("disp 0x%llx\n", get_displacement(inst, opcode_index, 8, 2));
+            printf("disp 0x%lx\n", get_displacement(inst, opcode_index, 8, 2));
             return;
         case OP_MOV:
             check_modrm_inst(inst, opcode_index);

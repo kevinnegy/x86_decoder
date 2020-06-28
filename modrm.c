@@ -58,9 +58,9 @@ void check_rex_modrm_inst(unsigned char * inst, int rex_index){
             if(rm == 5){
                 // TODO handle negative/64 bit
                 // in 64 bit, this is [RIP + disp32]                
-                unsigned long long disp = get_displacement(inst, rex_index + 1, 32, 0);
+                int64_t disp = get_displacement(inst, rex_index + 1, 32, 0);
 
-                printf("memory access [rip+0x%llx]\n", disp);
+                printf("memory access [rip+0x%lx]\n", disp);
                 return;
             }
             
