@@ -1,12 +1,14 @@
 #ifndef MODRM_H
 #define MODRM_H
 
-void check_modrm_inst(unsigned char * inst, int opcode_index);
-void check_rex_modrm_inst(unsigned char * inst, int rex_index);
-void check_modrm_reg(unsigned char * inst, int opcode_index);
-void check_modrm_rm(unsigned char * inst, int opcode_index);
-void check_rex_modrm_reg(unsigned char * inst, int rex_index);
-void check_rex_modrm_rm(unsigned char * inst, int rex_index);
+void check_modrm_inst_16(unsigned char * inst, int opcode_index);
+void check_modrm_inst_32(unsigned char * inst, int opcode_index);
+void check_modrm_inst_64(unsigned char * inst, int opcode_index);
+void check_modrm_rm_64(unsigned char * inst, int opcode_index);
+
+#define MODRM 0xc0
+#define REG   0x38
+#define RM   0x07
 
 /** ModR/M **/
 // ModR/M byte - addressing mode byte:

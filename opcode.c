@@ -51,18 +51,19 @@ void check_opcode(unsigned char * inst, int opcode_index){
 
     switch(opcode){
         case OP_ADD_01:
-            check_modrm_inst(inst, opcode_index);
+            check_modrm_inst_32(inst, opcode_index);
             return;
         case OP_CALL_E8:
-            printf("disp 0x%lx\n", get_displacement(inst, opcode_index, DEFAULT_BIT_MODE, 5));
+            printf("disp 0x%lx\n", get_displacement(inst, opcode_index + 1, DEFAULT_BIT_MODE, 5));
             return;
         case OP_JMP_EB:
-            printf("disp 0x%lx\n", get_displacement(inst, opcode_index, 8, 2));
+            printf("disp 0x%lx\n", get_displacement(inst, opcode_index + 1, 8, 2));
             return;
         case OP_MOV:
-            check_modrm_inst(inst, opcode_index);
+            check_modrm_inst_32(inst, opcode_index);
+            return;
         case OP_SHL:
-            check_modrm_rm(inst, opcode_index);
+            check_modrm_rm_64(inst, opcode_index); // TODO not 64 bit
             return;
     }
 
@@ -116,16 +117,16 @@ void check_opcode_rex(unsigned char * inst, int rex_index){
         case OP_MOV:
         case OP_MOV_8B:
         case OP_OR:
-            check_rex_modrm_inst(inst, rex_index);
+            check_modrm_inst_64(inst, rex_index);
             return;
 
         case OP_SHL:
         case OP_SUB_83:   // 83 \5 (use r/m not reg of modrm for register) and ib (immediate_8 byte)
-            check_rex_modrm_rm(inst, rex_index);
+            check_modrm_rm_64(inst, rex_index); 
             return;
         case OP_SUB_2B:
         case OP_TEST_85:
-            check_rex_modrm_inst(inst, rex_index);
+            check_modrm_inst_64(inst, rex_index);
             return;
     }
 
