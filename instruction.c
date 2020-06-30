@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -6,27 +5,9 @@
 #include "prefix.h"
 #include "opcode.h"
 
-u_int8_t get_byte(unsigned char * inst, int byte){
-    return (u_int8_t) inst[byte];
-}
-
 void decode_x86_inst(unsigned char * inst){
     assert(inst != NULL); 
-
-    u_int8_t byte;
-    int rex_exists, prefix_exists = 1, byte_num = -1;
-    
-    while(prefix_exists){
-        byte_num++;
-        byte = get_byte(inst, byte_num);
-        prefix_exists = check_prefix(byte);
-    }
-
-    rex_exists = check_rex(byte);
-    if(rex_exists)
-        check_opcode_rex(inst, byte_num);
-    else
-        check_opcode(inst, byte_num);
+    check_prefix(inst);
     return;
 }
 

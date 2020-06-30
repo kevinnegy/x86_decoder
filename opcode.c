@@ -6,24 +6,26 @@
 #include "immediates.h"
 #include "modrm.h"
 
-void check_third_opcode(unsigned char * inst, int rex_index){
+void check_third_opcode(unsigned char * inst){
+    assert(inst != NULL);
     return;
 }
 
 
-void check_second_opcode(unsigned char * inst, int opcode_index){
+void check_second_opcode(unsigned char * inst){
     assert(inst != NULL);
 
-    int opcode = inst[opcode_index + 1];
+    int opcode = inst[0];
     
     if(opcode == 0x38 || opcode == 0x3a){
-        return check_third_opcode(inst, opcode_index);
+        check_third_opcode(&inst[1]);
+        return;
     }
 
     switch(opcode){
         case OP_JZJE_84: //TODO are tttn encodings necessary?
         {
-            int64_t disp = get_displacement(inst, opcode_index + 2, DEFAULT_BIT_MODE, 0);
+            int64_t disp = get_displacement(&inst[1], DEFAULT_BIT_MODE, 0);
 
             if(DEFAULT_BIT_MODE == 16)
                 disp = disp + 4; //TODO test
@@ -42,28 +44,30 @@ void check_second_opcode(unsigned char * inst, int opcode_index){
     return;
 }
 
-void check_opcode(unsigned char * inst, int opcode_index){
-    u_int8_t opcode = inst[opcode_index]; 
+void check_opcode(unsigned char * inst){
+    assert(inst != NULL);
+    u_int8_t opcode = inst[0]; 
 
     if(opcode == 0xf){
-        return check_second_opcode(inst, opcode_index);
+        check_second_opcode(&inst[1]);
+        return;
     }
 
     switch(opcode){
         case OP_ADD_01:
-            check_modrm_inst_32(inst, opcode_index);
+            check_modrm_inst_32(&inst[1]);
             return;
         case OP_CALL_E8:
-            printf("disp 0x%lx\n", get_displacement(inst, opcode_index + 1, DEFAULT_BIT_MODE, 5));
+            printf("disp 0x%lx\n", get_displacement(&inst[1], DEFAULT_BIT_MODE, 5));
             return;
         case OP_JMP_EB:
-            printf("disp 0x%lx\n", get_displacement(inst, opcode_index + 1, 8, 2));
+            printf("disp 0x%lx\n", get_displacement(&inst[1], 8, 2));
             return;
         case OP_MOV:
-            check_modrm_inst_32(inst, opcode_index);
+            check_modrm_inst_32(&inst[1]);
             return;
         case OP_SHL:
-            check_modrm_rm_64(inst, opcode_index); // TODO not 64 bit
+            check_modrm_rm_64(&inst[1], 0); // TODO handle rex = 0 
             return;
     }
 
@@ -84,17 +88,19 @@ void check_opcode(unsigned char * inst, int opcode_index){
     return;
 }
 
-void check_third_opcode_rex(unsigned char * inst, int rex_index){
+void check_third_opcode_rex(unsigned char * inst, int rex){
+    assert(inst != NULL);
     return;
 }
 
-void check_second_opcode_rex(unsigned char * inst, int rex_index){
+void check_second_opcode_rex(unsigned char * inst, int rex){
     assert(inst != NULL);
 
-    int opcode = inst[rex_index + 2];
+    int opcode = inst[0];
     
     if(opcode == 0x38 || opcode == 0x3a){
-        return check_third_opcode_rex(inst, rex_index);
+        check_third_opcode_rex(&inst[1], rex);
+        return;
     }
 
     switch(opcode){
@@ -104,11 +110,13 @@ void check_second_opcode_rex(unsigned char * inst, int rex_index){
     return;
 }
 
-void check_opcode_rex(unsigned char * inst, int rex_index){
-    u_int8_t opcode = inst[rex_index + 1]; 
+void check_opcode_rex(unsigned char * inst, int rex){
+    assert(inst != NULL);
+    u_int8_t opcode = inst[0]; 
 
     if(opcode == 0xf){
-        return check_second_opcode_rex(inst, rex_index);
+        check_second_opcode_rex(&inst[1], rex);
+        return;
     }
 
     switch(opcode){
@@ -117,16 +125,16 @@ void check_opcode_rex(unsigned char * inst, int rex_index){
         case OP_MOV:
         case OP_MOV_8B:
         case OP_OR:
-            check_modrm_inst_64(inst, rex_index);
+            check_modrm_inst_64(&inst[1], rex);
             return;
 
         case OP_SHL:
         case OP_SUB_83:   // 83 \5 (use r/m not reg of modrm for register) and ib (immediate_8 byte)
-            check_modrm_rm_64(inst, rex_index); 
+            check_modrm_rm_64(&inst[1], rex); 
             return;
         case OP_SUB_2B:
         case OP_TEST_85:
-            check_modrm_inst_64(inst, rex_index);
+            check_modrm_inst_64(&inst[1], rex);
             return;
     }
 

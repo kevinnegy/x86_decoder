@@ -6,11 +6,11 @@
 #include "instruction.h"
 #include "registers.h"
 
-void check_sib_32(unsigned char * inst, int opcode_index){
-    struct one_op_sib * mold = (struct one_op_sib *) &inst[opcode_index];
-    int scale = (mold->sib & SIB_SS) >> 6;
-    int index = (mold->sib & SIB_INDEX) >> 3;
-    int base = (mold->sib & SIB_BASE);
+void check_sib_32(unsigned char * inst){
+    int sib = inst[0];
+    int scale = (sib & SIB_SS) >> 6;
+    int index = (sib & SIB_INDEX) >> 3;
+    int base = (sib & SIB_BASE);
 
     // TODO handle base == 5
     char * base_reg = get_register(base, 32); 
@@ -165,13 +165,13 @@ void check_sib_32(unsigned char * inst, int opcode_index){
     }
 }
 
-void check_sib_64(unsigned char * inst, int rex_index){
-    struct rex_one_op_sib * mold = (struct rex_one_op_sib *) &inst[rex_index];
-    u_int8_t rex_x = (mold->rex & REX_X) << 2; // Need the REX_X (2nd) bit shifted left to 4th position 
-    u_int8_t rex_b = (mold->rex & REX_B) << 3;
-    int scale = (mold->sib & SIB_SS) >> 6;
-    int index = (mold->sib & SIB_INDEX) >> 3;
-    int base = (mold->sib & SIB_BASE);
+void check_sib_64(unsigned char * inst, int rex){
+    int sib = inst[0];
+    u_int8_t rex_x = (rex & REX_X) << 2; // Need the REX_X (2nd) bit shifted left to 4th position 
+    u_int8_t rex_b = (rex & REX_B) << 3;
+    int scale = (sib & SIB_SS) >> 6;
+    int index = (sib & SIB_INDEX) >> 3;
+    int base = (sib & SIB_BASE);
 
     int base_ext = rex_x & base;
     int index_ext = rex_b & index;

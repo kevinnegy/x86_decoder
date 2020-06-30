@@ -18,20 +18,19 @@ int32_t calc_displacement(unsigned char * displacement, int num_bytes){
 }
 
 // Largest possible return is 64 bits. Each instruction can typecast back
-int64_t get_displacement(unsigned char * inst, int disp_byte_num, int disp_len, int instr_len){
-    struct disp_imm * mold = (struct disp_imm *) &inst[disp_byte_num];
+int64_t get_displacement(unsigned char * inst, int disp_len, int instr_len){
 
     switch(disp_len){
         case 8:
             if(DEFAULT_BIT_MODE == 16)
-                return (int16_t)(calc_displacement(mold->disp8, 1)) + instr_len;
-            return (int32_t)(calc_displacement(mold->disp8, 1)) + instr_len;
+                return (int16_t)(calc_displacement(inst, 1)) + instr_len;
+            return (int32_t)(calc_displacement(inst, 1)) + instr_len;
         case 16:
-            return calc_displacement(mold->disp16, 2) + instr_len;
+            return calc_displacement(inst, 2) + instr_len;
         case 32:
-            return calc_displacement(mold->disp32, 4) + instr_len;
+            return calc_displacement(inst, 4) + instr_len;
         case 64:
-            return (int64_t)(calc_displacement(mold->disp32, 4)) + instr_len; // Sign extend 32 to 64 bits
+            return (int64_t)(calc_displacement(inst, 4)) + instr_len; // Sign extend 32 to 64 bits
         default:
             assert(0);
     }
@@ -48,8 +47,7 @@ static unsigned long long calc_immediate(unsigned char * immediate, int num_byte
     return imm; 
 }
 
-unsigned long long get_immediate(unsigned char * inst, int imm_byte_num, int imm_len){
-    struct disp_imm * mold = (struct disp_imm *) &inst[imm_byte_num];
+unsigned long long get_immediate(unsigned char * inst, int imm_len){
     switch(imm_len){
         case(8): // 1 bytes to read
             return calc_immediate(inst, 1);
