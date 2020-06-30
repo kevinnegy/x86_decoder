@@ -20,6 +20,19 @@ struct one_op_modrm{
     u_int8_t modrm: 8;
 };
 
+struct rex_one_op_sib{
+    u_int8_t rex: 8;
+    u_int8_t opcode: 8;
+    u_int8_t modrm: 8;
+    u_int8_t sib: 8;
+};
+
+struct one_op_sib{
+    u_int8_t opcode: 8;
+    u_int8_t modrm: 8;
+    u_int8_t sib: 8;
+};
+
 struct disp_imm{
     union{
         unsigned char disp8[1];
