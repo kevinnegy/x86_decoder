@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include "sib.h"
 #include "prefix.h"
-#include "instruction.h"
 #include "registers.h"
 
 void check_sib_32(unsigned char * inst){
@@ -12,7 +11,6 @@ void check_sib_32(unsigned char * inst){
     int index = (sib & SIB_INDEX) >> 3;
     int base = (sib & SIB_BASE);
 
-    // TODO handle base == 5
     char * base_reg = get_register(base, 32); 
 
     switch(scale){
@@ -176,7 +174,6 @@ void check_sib_64(unsigned char * inst, int rex){
     int base_ext = rex_x & base;
     int index_ext = rex_b & index;
 
-    // TODO handle base == 5
     char * base_reg = get_register(base_ext, 32); 
 
     switch(scale){

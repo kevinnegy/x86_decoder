@@ -9,6 +9,7 @@ void check_modrm_inst_16(unsigned char * inst);
 void check_modrm_inst_32(unsigned char * inst);
 void check_modrm_inst_64(unsigned char * inst, int rex);
 void check_modrm_rm_64(unsigned char * inst, int rex);
+void check_modrm_rm_32(unsigned char * inst);
 
 /** ModR/M **/
 // ModR/M byte - addressing mode byte:

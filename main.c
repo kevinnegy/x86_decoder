@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "instruction.h"
+#include "x86_decoder.h"
 
 //MOV
 //                        100 - rsp 111 - rdi (mov rdi to rsp)
@@ -8,12 +8,13 @@
 //         1R0B 1000 1001 11          - qwordreg 1 to qwordreg2
 //         
 
+// 64 bit 
 void test1(unsigned char * bytes){
     int i = 0;
     for(i = 0; i< 3; i++)
         printf("%x ", bytes[i]);
     printf("\n");
-    decode_x86_inst(bytes);
+    decode_x86_inst(bytes, 64);
 }
 
 int main(){
@@ -22,7 +23,6 @@ int main(){
         printf("malloc failed in main()\n");
         return -1;
     }
-    set_bit_mode(64);
     
     // REG.W, mov op, and modrm registers
     bytes[0] = 0x48;

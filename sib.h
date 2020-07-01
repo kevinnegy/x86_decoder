@@ -1,7 +1,6 @@
 #ifndef SIB_H
 #define SIB_H
 
-
 // [scale * index] + [base]
 #define SIB_SS    0xc0 // scale
 #define SIB_INDEX 0x38 // index 

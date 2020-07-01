@@ -1,15 +1,6 @@
+#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <assert.h>
 #include "instruction.h"
-#include "prefix.h"
-#include "opcode.h"
-
-void decode_x86_inst(unsigned char * inst){
-    assert(inst != NULL); 
-    check_prefix(inst);
-    return;
-}
 
 void set_bit_mode(int mode){
     switch(mode){

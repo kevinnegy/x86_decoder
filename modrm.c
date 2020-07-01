@@ -1,9 +1,9 @@
-#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 #include "modrm.h"
 #include "registers.h"
 #include "immediates.h"
-#include "instruction.h"
 #include "prefix.h"
 #include "sib.h"
 
@@ -16,6 +16,9 @@ void check_modrm_rm_64(unsigned char * inst, int rex){
     return;
 }
 
+void check_modrm_rm_32(unsigned char * inst){
+    return;
+}
 
 // TODO handle mm(/r) MM0 and xmm(/r) XMM0 (check modrm table)
 void check_modrm_inst_16(unsigned char *inst){
@@ -103,7 +106,7 @@ void check_modrm_inst_16(unsigned char *inst){
 
 void check_modrm_inst_32(unsigned char *inst){
     int modrm = inst[0];
-    int bit_mode = 32; //TODO check w bit to determine what mode/ handle 16 bit case
+    int bit_mode = 32; 
     char * reg, * rm;
     u_int8_t mod = (modrm & MODRM) >> 6;
     u_int8_t modrm_reg = (modrm & REG) >> 3;
@@ -147,7 +150,7 @@ void check_modrm_inst_32(unsigned char *inst){
                     break;
                 case 4:
                     check_sib_32(&inst[1]); 
-// Move to SIB                    printf("0x%ld\n", get_displacement(&inst[1], 8, 0));
+                    printf("0x%ld\n", get_displacement(&inst[1], 8, 0));
                     break;
                 case 5:
                 case 6:
@@ -172,7 +175,7 @@ void check_modrm_inst_32(unsigned char *inst){
                     break;
                 case 4:
                     check_sib_32(&inst[1]); 
-// Move to SIB                    printf("0x%ld\n", get_displacement(inst, opcode_index + 3, bit_mode, 0));
+                    printf("0x%ld\n", get_displacement(&inst[2], bit_mode, 0));
                     break;
                 case 5:
                 case 6:
@@ -196,7 +199,6 @@ void check_modrm_inst_32(unsigned char *inst){
     return;
 }
 
-// TODO assumes one byte opcode
 void check_modrm_inst_64(unsigned char * inst, int rex){
     int modrm = inst[0];
     int bit_mode = 64;
@@ -253,7 +255,7 @@ void check_modrm_inst_64(unsigned char * inst, int rex){
                     break;
                 case 4:
                     check_sib_64(&inst[1], rex); 
-// Move to SIB                    printf("0x%ld\n", get_displacement(inst, rex_index + 4, 8, 0));
+                    printf("0x%ld\n", get_displacement(&inst[2], 8, 0));
                     break;
                 case 5:
                 case 6:
@@ -279,7 +281,7 @@ void check_modrm_inst_64(unsigned char * inst, int rex){
                     break;
                 case 4:
                     check_sib_64(&inst[1], rex); 
-// Move to SIB                    printf("0x%ld\n", get_displacement(inst, rex_index + 4, 8, 0));
+                    printf("0x%ld\n", get_displacement(&inst[2], 8, 0));
                     break;
                 case 5:
                 case 6:

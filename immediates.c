@@ -1,7 +1,6 @@
-#include <stdio.h>
 #include <assert.h>
+#include "instruction.h" // For DEFAULT_BIT_MODE
 #include "immediates.h"
-#include "instruction.h"
 
 // Use signed ints because displacement can be positive or negative in relative addressing
 int32_t calc_displacement(unsigned char * displacement, int num_bytes){

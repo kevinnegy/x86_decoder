@@ -44,6 +44,7 @@ void check_second_opcode(unsigned char * inst){
     return;
 }
 
+// TODO handle 16 bit cases
 void check_opcode(unsigned char * inst){
     assert(inst != NULL);
     u_int8_t opcode = inst[0]; 
@@ -67,7 +68,7 @@ void check_opcode(unsigned char * inst){
             check_modrm_inst_32(&inst[1]);
             return;
         case OP_SHL:
-            check_modrm_rm_64(&inst[1], 0); // TODO handle rex = 0 
+            check_modrm_rm_32(&inst[1]); 
             return;
     }
 
@@ -77,12 +78,11 @@ void check_opcode(unsigned char * inst){
         case OP_MOV_B8:
             return;
         case OP_POP:
-            // TODO Reads from stack pointer location
         case OP_PUSH:
-            // TODO Writes to stack pointer location
+            printf("memory access [ESP]\n"); 
             return;
         default:
-            printf("%s: %s %x\n", __func__, "invalid opcode", opcode);
+            assert(0);
             return;
     }
     return;
@@ -142,12 +142,14 @@ void check_opcode_rex(unsigned char * inst, int rex){
     opcode = opcode & 0xf8;
     switch(opcode){
         case OP_MOV_B8:
+            return;
         case OP_POP: // TODO Reads from stack pointer location
         case OP_PUSH: // TODO Writes to stack pointer location
+            printf("memory access [RSP]\n");
             return;
 
         default:
-            printf("%s: %s %x\n", __func__, "invalid opcode", opcode);
+            assert(0);
             return;
     }
     return;
