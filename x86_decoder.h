@@ -1,19 +1,13 @@
 #ifndef X86_DECODER_H
 #define x86_DECODER_H
 
-#include <stdio.h>
-#include "instruction.h"
-#include "prefix.h"
+#define MAX_INSTR_LEN 15 
+#define BYTE 8 
 
-void decode_x86_inst(unsigned char * inst, int mode){
-    if(inst == NULL){
-        fprintf(stderr, "%s: Instruction bytes array is null.", __func__);
-        return;
-    }
+int DEFAULT_BIT_MODE;
 
-    set_bit_mode(mode);
-    check_prefix(inst);
-    return;
-}
+// intel syntax has destination first like mips
+void set_bit_mode(int mode);
+void decode_x86_inst(unsigned char * inst, int mode);
 
 #endif

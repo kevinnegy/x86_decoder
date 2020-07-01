@@ -2,7 +2,7 @@
 #include <string.h>
 #include <assert.h>
 #include "opcode.h"
-#include "instruction.h"
+#include "x86_decoder.h"
 #include "immediates.h"
 #include "modrm.h"
 

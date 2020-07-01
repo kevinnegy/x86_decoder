@@ -1,5 +1,5 @@
 #include <assert.h>
-#include "instruction.h" // For DEFAULT_BIT_MODE
+#include "x86_decoder.h" // For DEFAULT_BIT_MODE
 #include "immediates.h"
 
 // Use signed ints because displacement can be positive or negative in relative addressing
