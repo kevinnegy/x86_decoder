@@ -28,8 +28,8 @@ void check_prefix(unsigned char * inst){
 void check_rex(unsigned char * inst){
     assert(inst != NULL);
     if((inst[0] & 0xf0) == REX_PREFIX) // Clear last 4 bits 
-        check_opcode_rex(&inst[1], inst[0]);
+        check_opcode(&inst[1], inst[0]);
     else
-        check_opcode(inst);
+        check_opcode(inst, 0);
     return;
 }

@@ -8,9 +8,20 @@ enum one_byte_opcodes{
     OP_CALL_E8 = 0xe8,
     OP_JMP_EB = 0xeb,
     OP_LEA = 0x8d, // load effective address
-    OP_MOV = 0x89,
-    OP_MOV_8B = 0x8b,
+    OP_MOV_88 = 0x88, // 8 bit regs/mm - reg->rm
+    OP_MOV_89 = 0x89, // 16,32,64 regs/mm - reg->rm
+    OP_MOV_8A = 0x8a, // 8 bit regs/mm - rm->reg
+    OP_MOV_8B = 0x8b, // 16,32,64 regs/mm - rm->reg
+    OP_MOV_8C = 0x8c, // mov sreg to 16/64 reg - reg->rm 
+    OP_MOV_8E = 0x8e, // mov sreg to 16/64 reg - rm->reg 
+    OP_MOV_A0 = 0xa0, // mov moffs8 to AL - moffs is seg:offset or just offset if REX.W 
+    OP_MOV_A1 = 0xa1, // mov moffs16,32,64 to AX,EAX,RAX - moffs is seg:offset or just offset if REX.W 
+    OP_MOV_A2 = 0xa2, // mov AL to moffs8 - moffs is seg:offset or just offset if REX.W 
+    OP_MOV_A3 = 0xa3, // mov AX,EAX,RAX to moffs16,32,64 - moffs is seg:offset or just offset if REX.W 
+    OP_MOV_B0 = 0xb0, // 8 bit imm to reg 
     OP_MOV_B8 = 0xb8, // mov uses last 3 bits for register, b8-bf, moves imm to reg
+    OP_MOV_C6 = 0xc6, // 8 bit imm to reg - use only r/m in modrm
+    OP_MOV_C7 = 0xc7, // 8 bit imm to mem - use only r/m in modrm
     OP_OR = 0x9,
     OP_POP = 0x58, // pop is 58-5f, last 3 bits are for register
     OP_PUSH = 0x50, // push is 50-57, last 3 bits are for register
@@ -27,8 +38,7 @@ enum two_byte_opcodes{
     OP_RDTSC = 0x31, // read time stamp counter
 };
 
-void check_opcode_rex(unsigned char * inst, int rex);
-void check_opcode(unsigned char * inst);
+void check_opcode(unsigned char * inst, int rex);
 
 // In 2 byte mode, it must have one of the following (3 byte is the same except a third opcode):
     // escape opcode 0F primary opcode and then a second opcode

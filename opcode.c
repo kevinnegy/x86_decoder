@@ -6,19 +6,19 @@
 #include "immediates.h"
 #include "modrm.h"
 
-void check_third_opcode(unsigned char * inst){
+void check_third_opcode(unsigned char * inst, int rex){
     assert(inst != NULL);
     return;
 }
 
 
-void check_second_opcode(unsigned char * inst){
+void check_second_opcode(unsigned char * inst, int rex){
     assert(inst != NULL);
 
     int opcode = inst[0];
     
     if(opcode == 0x38 || opcode == 0x3a){
-        check_third_opcode(&inst[1]);
+        check_third_opcode(&inst[1], rex);
         return;
     }
 
@@ -28,9 +28,10 @@ void check_second_opcode(unsigned char * inst){
             int64_t disp = get_displacement(&inst[1], DEFAULT_BIT_MODE, 0);
 
             if(DEFAULT_BIT_MODE == 16)
-                disp = disp + 4; //TODO test
+                disp = disp + 4; 
             else
                 disp = disp + 6; 
+
             printf("disp 0x%lx\n", disp);
 
             return;
@@ -45,18 +46,37 @@ void check_second_opcode(unsigned char * inst){
 }
 
 // TODO handle 16 bit cases
-void check_opcode(unsigned char * inst){
+void check_opcode(unsigned char * inst, int rex){
     assert(inst != NULL);
     u_int8_t opcode = inst[0]; 
 
     if(opcode == 0xf){
-        check_second_opcode(&inst[1]);
+        check_second_opcode(&inst[1], rex);
         return;
     }
 
     switch(opcode){
+        // TODO verify that all these instructions handle rex byte correctly
+        case OP_MOV_8C:
+        case OP_MOV_8E:
+            // TODO handle sregister (see opcode.h)
+            return;
+        case OP_MOV_88:
+        case OP_MOV_8A:
+            // TODO if REX, registers cannot be AH, BH, CH, DH
+            check_modrm_inst_16(&inst[1], 8);
+            return; 
         case OP_ADD_01:
-            check_modrm_inst_32(&inst[1]);
+        case OP_LEA:
+        case OP_MOV_89:
+        case OP_MOV_8B:
+        case OP_OR:
+        case OP_SUB_2B:
+        case OP_TEST_85:
+            if(rex != 0)
+                check_modrm_inst_64(&inst[1], rex);
+            else
+                check_modrm_inst_32(&inst[1]);
             return;
         case OP_CALL_E8:
             printf("disp 0x%lx\n", get_displacement(&inst[1], DEFAULT_BIT_MODE, 5));
@@ -64,90 +84,29 @@ void check_opcode(unsigned char * inst){
         case OP_JMP_EB:
             printf("disp 0x%lx\n", get_displacement(&inst[1], 8, 2));
             return;
-        case OP_MOV:
-            check_modrm_inst_32(&inst[1]);
-            return;
-        case OP_SHL:
-            check_modrm_rm_32(&inst[1]); 
-            return;
-    }
-
-    // Opcodes whose last 3 bits are for one register
-    opcode = opcode & 0xf8;
-    switch(opcode){
-        case OP_MOV_B8:
-            return;
-        case OP_POP:
-        case OP_PUSH:
-            printf("memory access [ESP]\n"); 
-            return;
-        default:
-            assert(0);
-            return;
-    }
-    return;
-}
-
-void check_third_opcode_rex(unsigned char * inst, int rex){
-    assert(inst != NULL);
-    return;
-}
-
-void check_second_opcode_rex(unsigned char * inst, int rex){
-    assert(inst != NULL);
-
-    int opcode = inst[0];
-    
-    if(opcode == 0x38 || opcode == 0x3a){
-        check_third_opcode_rex(&inst[1], rex);
-        return;
-    }
-
-    switch(opcode){
-        default:
-            assert(0);
-    }
-    return;
-}
-
-void check_opcode_rex(unsigned char * inst, int rex){
-    assert(inst != NULL);
-    u_int8_t opcode = inst[0]; 
-
-    if(opcode == 0xf){
-        check_second_opcode_rex(&inst[1], rex);
-        return;
-    }
-
-    switch(opcode){
-        case OP_ADD_01:
-        case OP_LEA:
-        case OP_MOV:
-        case OP_MOV_8B:
-        case OP_OR:
-            check_modrm_inst_64(&inst[1], rex);
-            return;
-
         case OP_SHL:
         case OP_SUB_83:   // 83 \5 (use r/m not reg of modrm for register) and ib (immediate_8 byte)
-            check_modrm_rm_64(&inst[1], rex); 
-            return;
-        case OP_SUB_2B:
-        case OP_TEST_85:
-            check_modrm_inst_64(&inst[1], rex);
+            // TODO does this need an immediate call here or will modrm take care of it?
+            if(rex != 0)
+                check_modrm_rm_64(&inst[1], rex); 
+            else
+                check_modrm_rm_32(&inst[1]); 
             return;
     }
 
     // Opcodes whose last 3 bits are for one register
     opcode = opcode & 0xf8;
     switch(opcode){
-        case OP_MOV_B8:
+        case OP_POP:
+        case OP_PUSH:
+            if(DEFAULT_BIT_MODE == 64)
+                printf("memory access [RSP]\n"); 
+            else if(DEFAULT_BIT_MODE == 32)
+                printf("memory access [ESP]\n"); 
+            else if(DEFAULT_BIT_MODE == 16)
+                printf("memory access [SP]\n"); 
+                
             return;
-        case OP_POP: // TODO Reads from stack pointer location
-        case OP_PUSH: // TODO Writes to stack pointer location
-            printf("memory access [RSP]\n");
-            return;
-
         default:
             assert(0);
             return;

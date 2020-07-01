@@ -21,9 +21,8 @@ void check_modrm_rm_32(unsigned char * inst){
 }
 
 // TODO handle mm(/r) MM0 and xmm(/r) XMM0 (check modrm table)
-void check_modrm_inst_16(unsigned char *inst){
+void check_modrm_inst_16(unsigned char *inst, int bit_mode){
     int modrm = inst[0];
-    int bit_mode = 16; 
     char * reg, * rm;
     u_int8_t mod = (modrm & MODRM) >> 6;
     u_int8_t modrm_reg = (modrm & REG) >> 3;

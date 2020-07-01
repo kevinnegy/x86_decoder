@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <assert.h>
 #include "registers.h"
 
 static char * get_register_16(int index){
@@ -17,24 +18,40 @@ static char * get_register_64(int index){
 }
 
 
-static char * get_byte_register(int index){
+static char * get_register_8(int index){
     char * strings[] = {"al", "cl", "dl", "bl", "ah", "ch", "dh", "bh", "r8l", "r9l", "r10l", "r11l", "r12l", "r13l", "r14l", "r15l"};
     return strings[index];
 }
 
+static char * get_sregister(int index){
+    char * strings[] = {"es", "cs", "ss", "ds", "fs", "gs"};
+    return strings[index];
+}
+
+static char * get_cntrl_register(int index){
+    char * strings[] = {"cr0", "cr1", "cr2", "cr3", "cr4", "cr5", "cr6", "cr7", "cr8"};
+    return strings[index];
+}
+
 char * get_register(int index, int mode){
-    if(index < 0 || index > 15){
-        printf("%s: %s\n", __func__, "register out of range");
-        return NULL;
-    }
+    if(index < 0 || index > 15)
+        assert(0);
 
     if(mode == 8)
-        return get_byte_register(index);
+        return get_register_8(index);
     else if(mode == 16)
         return get_register_16(index);
     else if(mode == 32)
         return get_register_32(index);
     else if(mode == 64)
         return get_register_64(index);
+    else if(mode == 1){ // internal identification of sregs
+        if(index > 5) assert(0);
+        return get_sregister(index);
+    }
+    else if(mode == 2){ // internal identification of cntrl_regs
+        if(index > 9) assert(0);
+        return get_cntrl_register(index);
+    }
     return NULL;        
 }

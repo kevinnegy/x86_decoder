@@ -5,7 +5,7 @@
 #define REG   0x38
 #define RM    0x07
 
-void check_modrm_inst_16(unsigned char * inst);
+void check_modrm_inst_16(unsigned char * inst, int bit_mode);
 void check_modrm_inst_32(unsigned char * inst);
 void check_modrm_inst_64(unsigned char * inst, int rex);
 void check_modrm_rm_64(unsigned char * inst, int rex);
