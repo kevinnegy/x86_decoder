@@ -3,11 +3,30 @@
 #include <assert.h>
 #include "opcode.h"
 #include "x86_decoder.h"
+#include "prefix.h"
 #include "immediates.h"
 #include "modrm.h"
 
+// Assume 64 bit programs only 
+int find_operand_size(int operand_override, int rex){
+    if(rex & REX_W) // 66 byte prefix is ignored if REX_W exists
+        return 64;
+    if(operand_override)
+        return 16;
+    return 32;     
+}
+
+// Assume 64 bit programs only - can never be 16 bit mode. See wiki.osdev.org table on "operand-size and address-size override prefix"
+int find_address_size(int address_override){
+    if(address_override)
+        return 32;
+    return 64;     
+}
+
 void check_third_opcode(unsigned char * inst, int operand_override, int address_override, int rex){
     assert(inst != NULL);
+    int operand_size = find_operand_size(operand_override, rex);
+    int address_size = find_address_size(operand_override);
     return;
 }
 
@@ -22,6 +41,8 @@ void check_second_opcode(unsigned char * inst, int operand_override, int address
         return;
     }
 
+    int operand_size = find_operand_size(operand_override, rex);
+    int address_size = find_address_size(operand_override);
     switch(opcode){
         case OP_JZJE_84: //TODO are tttn encodings necessary?
         {
@@ -55,6 +76,9 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
         check_second_opcode(&inst[1], operand_override, address_override, rex);
         return;
     }
+
+    int operand_size = find_operand_size(operand_override, rex);
+    int address_size = find_address_size(operand_override);
 
     switch(opcode){
         // TODO verify that all these instructions handle rex byte correctly
