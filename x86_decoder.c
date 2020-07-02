@@ -11,7 +11,7 @@ void decode_x86_inst(unsigned char * inst, int mode){
     }
 
     set_bit_mode(mode);
-    check_prefix(inst);
+    check_prefix(inst, 0, 0);
     return;
 }
 

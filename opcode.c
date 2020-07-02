@@ -6,25 +6,26 @@
 #include "immediates.h"
 #include "modrm.h"
 
-void check_third_opcode(unsigned char * inst, int rex){
+void check_third_opcode(unsigned char * inst, int operand_override, int address_override, int rex){
     assert(inst != NULL);
     return;
 }
 
 
-void check_second_opcode(unsigned char * inst, int rex){
+void check_second_opcode(unsigned char * inst, int operand_override, int address_override, int rex){
     assert(inst != NULL);
 
     int opcode = inst[0];
     
     if(opcode == 0x38 || opcode == 0x3a){
-        check_third_opcode(&inst[1], rex);
+        check_third_opcode(&inst[1], operand_override, address_override, rex);
         return;
     }
 
     switch(opcode){
         case OP_JZJE_84: //TODO are tttn encodings necessary?
         {
+            // TODO handle
             int64_t disp = get_displacement(&inst[1], DEFAULT_BIT_MODE, 0);
 
             if(DEFAULT_BIT_MODE == 16)
@@ -46,12 +47,12 @@ void check_second_opcode(unsigned char * inst, int rex){
 }
 
 // TODO handle 16 bit cases
-void check_opcode(unsigned char * inst, int rex){
+void check_opcode(unsigned char * inst, int operand_override, int address_override, int rex){
     assert(inst != NULL);
     u_int8_t opcode = inst[0]; 
 
     if(opcode == 0xf){
-        check_second_opcode(&inst[1], rex);
+        check_second_opcode(&inst[1], operand_override, address_override, rex);
         return;
     }
 
@@ -63,8 +64,9 @@ void check_opcode(unsigned char * inst, int rex){
             return;
         case OP_MOV_88:
         case OP_MOV_8A:
-            // TODO if REX, registers cannot be AH, BH, CH, DH
-            check_modrm_inst_16(&inst[1], 8);
+            
+            // TODO handle
+//            check_modrm_inst_16(&inst[1], 8);
             return; 
         case OP_ADD_01:
         case OP_LEA:
@@ -73,12 +75,10 @@ void check_opcode(unsigned char * inst, int rex){
         case OP_OR:
         case OP_SUB_2B:
         case OP_TEST_85:
-            if(rex != 0)
-                check_modrm_inst_64(&inst[1], rex);
-            else
-                check_modrm_inst_32(&inst[1]);
+            // TODO handle checkmodrm and override prefixes
             return;
         case OP_CALL_E8:
+            // TODO check this
             printf("disp 0x%lx\n", get_displacement(&inst[1], DEFAULT_BIT_MODE, 5));
             return;
         case OP_JMP_EB:
@@ -87,11 +87,8 @@ void check_opcode(unsigned char * inst, int rex){
         case OP_SHL:
         case OP_SUB_83:   // 83 \5 (use r/m not reg of modrm for register) and ib (immediate_8 byte)
             // TODO does this need an immediate call here or will modrm take care of it?
-            if(rex != 0)
-                check_modrm_rm_64(&inst[1], rex); 
-            else
-                check_modrm_rm_32(&inst[1]); 
-            return;
+            // TODO checkmodrm_RM only here
+           return;
     }
 
     // Opcodes whose last 3 bits are for one register

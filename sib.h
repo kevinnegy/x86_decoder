@@ -6,7 +6,6 @@
 #define SIB_INDEX 0x38 // index 
 #define SIB_BASE  0x07 // base 
 
-void check_sib_32(unsigned char * inst);
-void check_sib_64(unsigned char * inst, int rex); 
+void check_sib(unsigned char * inst, int operand_size, int rex); 
 
 #endif 

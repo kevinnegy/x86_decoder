@@ -12,23 +12,29 @@ static char * get_effective_addr_16(int index){
     return strings[index];
 }
 
-void check_modrm_rm_64(unsigned char * inst, int rex){
-    return;
-}
-
-void check_modrm_rm_32(unsigned char * inst){
-    return;
-}
-
-// TODO handle mm(/r) MM0 and xmm(/r) XMM0 (check modrm table)
-void check_modrm_inst_16(unsigned char *inst, int bit_mode){
+void check_modrm_reg(unsigned char * inst, int operand_size, int address_size, int rex){
     int modrm = inst[0];
-    char * reg, * rm;
-    u_int8_t mod = (modrm & MODRM) >> 6;
-    u_int8_t modrm_reg = (modrm & REG) >> 3;
-    u_int8_t modrm_rm = (modrm & RM);
+    int reg_num = (modrm & REG) >> 3;
+    char * reg;
 
-    reg = get_register(modrm_reg, bit_mode);
+    if(rex != 0 && rex & REX_W){
+        assert(operand_size == 64);
+        // REX bits need to be in 4th position from right 
+        u_int8_t rex_r = (rex & REX_R) << 1; 
+
+        // Get extension bit from rex prefix
+        reg_num = reg_num| rex_r;
+    } 
+
+    reg = get_register(reg_num, operand_size, rex);
+}
+
+// Should not be called when instruction has REX.W bit set
+void modrm_rm_16(unsigned char * inst, int operand_size, int address_size){
+    int modrm = inst[0];
+    char * rm;
+    u_int8_t mod = (modrm & MODRM) >> 6;
+    u_int8_t modrm_rm = (modrm & RM);
 
     switch(mod){
         case 0:
@@ -42,7 +48,7 @@ void check_modrm_inst_16(unsigned char *inst, int bit_mode){
                     printf("memory access [%s]\n", get_effective_addr_16(modrm_rm));
                     break;
                 case 6:
-                    printf("disp 0x%ld\n", get_displacement(&inst[1], bit_mode, 0));
+                    printf("disp 0x%ld\n", get_displacement(&inst[1], operand_size, 0));
                     break;
                 case 7:
                     printf("memory access [%s]\n", get_effective_addr_16(modrm_rm));
@@ -83,7 +89,7 @@ void check_modrm_inst_16(unsigned char *inst, int bit_mode){
                 case 6:
                 case 7:
                     printf("memory access [%s] +", get_effective_addr_16(modrm_rm));
-                    printf("disp 0x%ld\n", get_displacement(&inst[1], bit_mode, 0));
+                    printf("disp 0x%ld\n", get_displacement(&inst[1], operand_size, 0));
                     break;
                 default:
                     assert(0);
@@ -93,7 +99,7 @@ void check_modrm_inst_16(unsigned char *inst, int bit_mode){
 
         case 3:
             // both operands are registers
-            rm = get_register(modrm_rm, bit_mode);
+            rm = get_register(modrm_rm, operand_size, 0);
             break;
 
         default:
@@ -103,163 +109,68 @@ void check_modrm_inst_16(unsigned char *inst, int bit_mode){
     return;
 }
 
-void check_modrm_inst_32(unsigned char *inst){
-    int modrm = inst[0];
-    int bit_mode = 32; 
-    char * reg, * rm;
-    u_int8_t mod = (modrm & MODRM) >> 6;
-    u_int8_t modrm_reg = (modrm & REG) >> 3;
-    u_int8_t modrm_rm = (modrm & RM);
-
-    reg = get_register(modrm_reg, bit_mode);
-
-    switch(mod){
-        case 0:
-            switch(modrm_rm){
-                case 0:
-                case 1:
-                case 2:
-                case 3:
-                    printf("memory access [%s]\n", get_register(modrm_rm, bit_mode));
-                    break;
-                case 4:
-                    check_sib_32(&inst[1]); 
-                    break;
-                case 5:
-                    printf("memory access [rip+0x%lx]\n", get_displacement(&inst[1], bit_mode, 0));
-                    break;
-                case 6:
-                case 7:
-                    printf("memory access [%s]\n", get_register(modrm_rm, bit_mode));
-                    break;
-                default:
-                    assert(0);
-            }
-
-            break;
-
-        case 1:
-            switch(modrm_rm){
-                case 0:
-                case 1:
-                case 2:
-                case 3:
-                    printf("memory access [%s] + ", get_register(modrm_rm, bit_mode));
-                    printf("0x%ld\n", get_displacement(&inst[1], 8, 0));
-                    break;
-                case 4:
-                    check_sib_32(&inst[1]); 
-                    printf("0x%ld\n", get_displacement(&inst[1], 8, 0));
-                    break;
-                case 5:
-                case 6:
-                case 7:
-                    printf("memory access [%s] + ", get_register(modrm_rm, bit_mode));
-                    printf("0x%ld\n", get_displacement(&inst[1], 8, 0));
-                    break;
-                default:
-                    assert(0);
-            }
-
-            break;
-
-        case 2:
-            switch(modrm_rm){
-                case 0:
-                case 1:
-                case 2:
-                case 3:
-                    printf("memory access [%s]\n", get_register(modrm_rm, bit_mode));
-                    printf("+ 0x%ld\n", get_displacement(&inst[1], bit_mode, 0));
-                    break;
-                case 4:
-                    check_sib_32(&inst[1]); 
-                    printf("0x%ld\n", get_displacement(&inst[2], bit_mode, 0));
-                    break;
-                case 5:
-                case 6:
-                case 7:
-                    printf("memory access [%s]\n", get_register(modrm_rm, bit_mode));
-                    printf("+ 0x%ld\n", get_displacement(&inst[1], bit_mode, 0));
-                    break;
-                default:
-                    assert(0);
-            }
-
-            break;
-
-        case 3:
-            rm = get_register(modrm_rm, bit_mode);
-            break;
-
-        default:
-            assert(0);
+void check_modrm_rm(unsigned char * inst, int operand_size, int address_size, int rex){
+    if(address_size == 16){
+        assert(rex & REX_W == 0); 
+        return modrm_rm_16(inst, operand_size, address_size);
     }
-    return;
-}
 
-void check_modrm_inst_64(unsigned char * inst, int rex){
     int modrm = inst[0];
-    int bit_mode = 64;
-    char * reg, *rm;
-    
-    // REX bits need to be in 4th position from right 
-    u_int8_t rex_r = (rex & REX_R) << 1; 
-    u_int8_t rex_x = (rex & REX_X) << 2;
-    u_int8_t rex_b = (rex & REX_B) << 3;
-
+    char * rm;
     u_int8_t mod = (modrm & MODRM) >> 6;
-    u_int8_t modrm_reg = (modrm & REG) >> 3;
     u_int8_t modrm_rm = (modrm & RM);
 
-    // Get extension bit from rex prefix
-    u_int8_t reg_ext = modrm_reg | rex_r;
-    u_int8_t rm_ext = modrm_rm | rex_b;
+    if(rex & REX_W){
+        assert(operand_size == 64);
 
-    reg = get_register(modrm_reg, bit_mode);
+        // Get extension bit from rex prefix
+        u_int8_t rex_b = (rex & REX_B) << 3;
+        modrm_rm = modrm_rm | rex_b;
+    }
 
+    int modrm_rm_no_rex = modrm_rm & 0x7;
     switch(mod){
         case 0:
-            switch(modrm_rm){
+            switch(modrm_rm_no_rex){
                 case 0:
                 case 1:
                 case 2:
                 case 3:
-                    printf("memory access [%s]\n", get_register(rm_ext, bit_mode));
+                    printf("memory access [%s]\n", get_register(modrm_rm, operand_size, rex));
                     break;
                 case 4:
-                    check_sib_64(&inst[1], rex); 
+                    check_sib(&inst[1], operand_size, rex); 
                     break;
                 case 5:
                     printf("memory access [rip+0x%lx]\n", get_displacement(&inst[1], 32, 0));
                     break;
                 case 6:
                 case 7:
-                    printf("memory access [%s]\n", get_register(rm_ext, bit_mode));
+                    printf("memory access [%s]\n", get_register(modrm_rm, operand_size, rex));
                     break;
                 default:
                     assert(0);
             }
 
             break;
-            
+
         case 1:
-            switch(modrm_rm){
+            switch(modrm_rm_no_rex){
                 case 0:
                 case 1:
                 case 2:
                 case 3:
-                    printf("memory access [%s] + ", get_register(rm_ext, bit_mode));
+                    printf("memory access [%s] + ", get_register(modrm_rm, operand_size, rex));
                     printf("0x%ld\n", get_displacement(&inst[1], 8, 0));
                     break;
                 case 4:
-                    check_sib_64(&inst[1], rex); 
+                    check_sib(&inst[1], operand_size, rex); 
                     printf("0x%ld\n", get_displacement(&inst[2], 8, 0));
                     break;
                 case 5:
                 case 6:
                 case 7:
-                    printf("memory access [%s] + ", get_register(rm_ext, bit_mode));
+                    printf("memory access [%s] + ", get_register(modrm_rm, operand_size, rex));
                     printf("0x%ld\n", get_displacement(&inst[1], 8, 0));
                     break;
                 default:
@@ -267,26 +178,25 @@ void check_modrm_inst_64(unsigned char * inst, int rex){
             }
 
             break;
-
 
         case 2:
-            switch(modrm_rm){
+            switch(modrm_rm_no_rex){
                 case 0:
                 case 1:
                 case 2:
                 case 3:
-                    printf("memory access [%s] + ", get_register(rm_ext, bit_mode));
-                    printf("0x%ld\n", get_displacement(&inst[1], 32, 0));
+                    printf("memory access [%s]\n", get_register(modrm_rm, operand_size, rex));
+                    printf("+ 0x%ld\n", get_displacement(&inst[1], 32, 0));
                     break;
                 case 4:
-                    check_sib_64(&inst[1], rex); 
-                    printf("0x%ld\n", get_displacement(&inst[2], 8, 0));
+                    check_sib(&inst[1], operand_size, rex); 
+                    printf("0x%ld\n", get_displacement(&inst[2], 32, 0));
                     break;
                 case 5:
                 case 6:
                 case 7:
-                    printf("memory access [%s] + ", get_register(rm_ext, bit_mode));
-                    printf("0x%ld\n", get_displacement(&inst[1], 32, 0));
+                    printf("memory access [%s]\n", get_register(modrm_rm, operand_size, rex));
+                    printf("+ 0x%ld\n", get_displacement(&inst[1], 32, 0));
                     break;
                 default:
                     assert(0);
@@ -295,11 +205,11 @@ void check_modrm_inst_64(unsigned char * inst, int rex){
             break;
 
         case 3:
-            rm = get_register(rm_ext, bit_mode);
+            rm = get_register(modrm_rm, operand_size, rex);
             break;
+
         default:
             assert(0);
+    }
+    return;
 }
-return;
-}
-

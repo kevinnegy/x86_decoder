@@ -2,8 +2,8 @@
 #define PREFIX_H
 
 /** Prefixes **/
-void check_prefix(unsigned char * inst);
-void check_rex(unsigned char * inst);
+void check_prefix(unsigned char * inst, int operand_override, int address_override);
+void check_rex(unsigned char * inst, int operand_override, int address_override);
 
 enum prefixes{
     PREFIX_LOCK = 0xf0,

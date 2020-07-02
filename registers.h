@@ -68,9 +68,13 @@ enum regs_8{
     REGS_8_DL = 0x2,
     REGS_8_BL = 0x3,
     REGS_8_AH = 0x4,
+        REGS_8_SPL = 0x4, // REX
     REGS_8_CH = 0x5,
+        REGS_8_BPL = 0x5,
     REGS_8_DH = 0x6,
+        REGS_8_SIL = 0x6,
     REGS_8_BH = 0x7,
+        REGS_8_DIL = 0x7,
     REGS_8_R8L = 0x8,
     REGS_8_R9L = 0x9,
     REGS_8_R10L = 0xa,
@@ -103,7 +107,7 @@ enum cntrl_regs{
 };
 
 
-char * get_register(int index, int mode);
+char * get_register(int index, int mode, int rex);
 
 #endif 
 

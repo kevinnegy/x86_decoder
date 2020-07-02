@@ -5,11 +5,12 @@
 #define REG   0x38
 #define RM    0x07
 
-void check_modrm_inst_16(unsigned char * inst, int bit_mode);
-void check_modrm_inst_32(unsigned char * inst);
-void check_modrm_inst_64(unsigned char * inst, int rex);
-void check_modrm_rm_64(unsigned char * inst, int rex);
-void check_modrm_rm_32(unsigned char * inst);
+// If 64-bit mode, without rex byte, most operands are 32 bit and addressing is 64 bits
+    // if rex byte exists and w = 1, operand is 64 bit
+    // if operand_size_override is on, (no rex byte should be used) switch to 16 bit operand
+    // if address_size_override is on, (no rex byte should be used) switch to 16 bit addressing 
+void check_modrm_rm(unsigned char * inst, int operand_size, int address_size, int rex);
+void check_modrm_reg(unsigned char * inst, int operand_size, int address_size, int rex);
 
 /** ModR/M **/
 // ModR/M byte - addressing mode byte:

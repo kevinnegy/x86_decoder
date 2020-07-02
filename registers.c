@@ -19,7 +19,12 @@ static char * get_register_64(int index){
 
 
 static char * get_register_8(int index){
-    char * strings[] = {"al", "cl", "dl", "bl", "ah", "ch", "dh", "bh", "r8l", "r9l", "r10l", "r11l", "r12l", "r13l", "r14l", "r15l"};
+    char * strings[] = {"al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"};
+    return strings[index];
+}
+
+static char * get_register_8_rex(int index){
+    char * strings[] = {"al", "cl", "dl", "bl", "spl", "bpl", "sil", "dil", "r8l", "r9l", "r10l", "r11l", "r12l", "r13l", "r14l", "r15l"};
     return strings[index];
 }
 
@@ -33,12 +38,16 @@ static char * get_cntrl_register(int index){
     return strings[index];
 }
 
-char * get_register(int index, int mode){
+char * get_register(int index, int mode, int rex){
     if(index < 0 || index > 15)
         assert(0);
 
-    if(mode == 8)
+    if(mode == 8 && rex == 0){
+        if(index > 7) assert(0);
         return get_register_8(index);
+    }
+    else if(mode == 8)
+        return get_register_8_rex(index);
     else if(mode == 16)
         return get_register_16(index);
     else if(mode == 32)

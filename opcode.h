@@ -38,7 +38,7 @@ enum two_byte_opcodes{
     OP_RDTSC = 0x31, // read time stamp counter
 };
 
-void check_opcode(unsigned char * inst, int rex);
+void check_opcode(unsigned char * inst, int operand_override, int address_override, int rex);
 
 // In 2 byte mode, it must have one of the following (3 byte is the same except a third opcode):
     // escape opcode 0F primary opcode and then a second opcode
