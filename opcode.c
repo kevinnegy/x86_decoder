@@ -6,6 +6,9 @@
 #include "prefix.h"
 #include "immediates.h"
 #include "modrm.h"
+#include "registers.h"
+
+// Destination first, source second
 
 // Assume 64 bit programs only 
 int find_operand_size(int operand_override, int rex){
@@ -86,33 +89,111 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
         case OP_MOV_8E:
             // TODO handle sregister (see opcode.h)
             return;
+
+        // 8 bit operand case - rm (dest), reg
+        case OP_ADD_00:
         case OP_MOV_88:
+            check_modrm_rm(&inst[1], 8, address_size, rex);
+            check_modrm_reg(&inst[1], 8, address_size, rex);
+            return;
+
+        // 8 bit operand case - reg (dest), rm
+        case OP_ADD_02:
         case OP_MOV_8A:
-            
-            // TODO handle
-//            check_modrm_inst_16(&inst[1], 8);
-            return; 
+            check_modrm_reg(&inst[1], 8, address_size, rex);
+            check_modrm_rm(&inst[1], 8, address_size, rex);
+            return;
+
+        // Normal - rm (dest), reg 
         case OP_ADD_01:
-        case OP_LEA:
         case OP_MOV_89:
+            check_modrm_rm(&inst[1], operand_size, address_size, rex);
+            check_modrm_reg(&inst[1], operand_size, address_size, rex);
+            return;
+
+        // Normal - reg (dest), rm 
+        case OP_ADD_03:
+        case OP_LEA:
         case OP_MOV_8B:
+            check_modrm_reg(&inst[1], operand_size, address_size, rex);
+            check_modrm_rm(&inst[1], operand_size, address_size, rex);
+            return;
+
+//        case OP_SUB_83:   // 83 \5 (use r/m not reg of modrm for register) and ib (immediate_8 byte)
+            // TODO combine with add_83 
+           return;
+        // rm (dest), imm8 
+        case OP_ADD_83:
+            check_modrm_rm(&inst[1], operand_size, address_size, rex);
+            get_immediate(&inst[2], 8);
+            return;
+
+        // rm (dest), imm16,32
+        case OP_ADD_81:
+            check_modrm_rm(&inst[1], operand_size, address_size, rex);
+            if(operand_size == 64)
+                get_immediate(&inst[2], 32);
+            else
+                get_immediate(&inst[2], operand_size);
+            return;
+            
+        // rm8 (dest), imm8
+        case OP_ADD_80:
+            check_modrm_rm(&inst[1], 8, address_size, rex);
+            get_immediate(&inst[2], 8);
+            return;
+
+        // ax,eax,rax imm16,32
+        case OP_ADD_05:
+            get_register(0, operand_size, rex);
+            if(operand_size == 64)
+                get_immediate(&inst[1], 32);
+            else
+                get_immediate(&inst[1], operand_size);
+            return;
+        
+        // AL imm8
+        case OP_ADD_04:
+            get_register(0, 8, 0); // AL
+            get_immediate(&inst[1], 8);
+            return;
+
         case OP_OR:
         case OP_SUB_2B:
         case OP_TEST_85:
             // TODO handle checkmodrm and override prefixes
             return;
         case OP_CALL_E8:
-            // TODO check this
-            printf("disp 0x%lx\n", get_displacement(&inst[1], DEFAULT_BIT_MODE, 5));
+            printf("disp 0x%lx\n", get_displacement(&inst[1], 64, 5)); // 32 bit disp but sign extended
             return;
+        case 0xFF: // Could be call(f) jmp(f) inc dec or push
+            switch(inst[1] & 0x38 >> 3){
+                case 2: // Call
+                    check_modrm_rm(&inst[1], 64, address_size, rex);
+                    return;
+                case 3: // Call
+                    ;//TODO handle this weird sreg case
+                    return;
+                case 4: // Jmp
+                    check_modrm_rm(&inst[1], 64, address_size, rex);
+                    return; 
+                case 5: // Jmp
+                    ;//TODO handle this weird sreg case
+                default:
+                    assert(0);
+            }
+            return;
+
         case OP_JMP_EB:
-            printf("disp 0x%lx\n", get_displacement(&inst[1], 8, 2));
+            printf("memory access [rip+0x%lx]\n", get_displacement(&inst[1], 8, 2));
             return;
+        case OP_JMP_E9:
+            printf("memory access [rip+0x%lx]\n", get_displacement(&inst[1], 32, 2));
+            return;
+
+
         case OP_SHL:
-        case OP_SUB_83:   // 83 \5 (use r/m not reg of modrm for register) and ib (immediate_8 byte)
-            // TODO does this need an immediate call here or will modrm take care of it?
-            // TODO checkmodrm_RM only here
-           return;
+            return;
     }
 
     // Opcodes whose last 3 bits are for one register
@@ -121,11 +202,11 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
         case OP_POP:
         case OP_PUSH:
             if(DEFAULT_BIT_MODE == 64)
-                printf("memory access [RSP]\n"); 
+                printf("memory access [rsp]\n"); 
             else if(DEFAULT_BIT_MODE == 32)
-                printf("memory access [ESP]\n"); 
+                printf("memory access [esp]\n"); 
             else if(DEFAULT_BIT_MODE == 16)
-                printf("memory access [SP]\n"); 
+                printf("memory access [sp]\n"); 
                 
             return;
         default:

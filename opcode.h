@@ -4,10 +4,29 @@
 /** Opcodes **/
 // Can be 1,2, or 3 bytes. A fourth can be in ModRM
 enum one_byte_opcodes{
-    OP_ADD_01 = 0x1,
-    OP_CALL_E8 = 0xe8,
+    // Add - done
+    OP_ADD_00 = 0x0, // 8 modrm - reg->rm
+    OP_ADD_01 = 0x1, // 16,32,64 modrm - reg->rm
+    OP_ADD_02 = 0x2, // 8 modrm - rm->reg
+    OP_ADD_03 = 0x3, // 16,32,64 modrm - rm->reg
+    OP_ADD_04 = 0x4, // 8 AL imm8
+    OP_ADD_05 = 0x5, // 16,32,64 ax,eax,rax imm16,32 
+    OP_ADD_80 = 0x80, // 8 modrm imm8 - imm8->rm8
+    OP_ADD_81 = 0x81, // 16,32,64 rm imm16,32 - imm8->rm
+    OP_ADD_83 = 0x83, // 16,32,64 rm imm8 - imm8->rm
+
+    // Call -done 
+    OP_CALL_E8 = 0xe8, // disp 32-> 64 bit sign extend
+    OP_CALL_FF = 0xff, // rm64 or jump to different location
+
+    // Jmp -done
     OP_JMP_EB = 0xeb,
+    OP_JMP_E9 = 0xe9,
+    OP_JMP_FF = 0xff,  
+
+    // Lea done
     OP_LEA = 0x8d, // load effective address
+
     OP_MOV_88 = 0x88, // 8 bit regs/mm - reg->rm
     OP_MOV_89 = 0x89, // 16,32,64 regs/mm - reg->rm
     OP_MOV_8A = 0x8a, // 8 bit regs/mm - rm->reg

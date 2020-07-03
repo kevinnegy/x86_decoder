@@ -185,7 +185,7 @@ void check_modrm_rm(unsigned char * inst, int operand_size, int address_size, in
                 case 1:
                 case 2:
                 case 3:
-                    printf("memory access [%s]\n", get_register(modrm_rm, operand_size, rex));
+                    printf("memory access [%s]", get_register(modrm_rm, operand_size, rex));
                     printf("+ 0x%ld\n", get_displacement(&inst[1], 32, 0));
                     break;
                 case 4:
@@ -195,7 +195,7 @@ void check_modrm_rm(unsigned char * inst, int operand_size, int address_size, in
                 case 5:
                 case 6:
                 case 7:
-                    printf("memory access [%s]\n", get_register(modrm_rm, operand_size, rex));
+                    printf("memory access [%s]", get_register(modrm_rm, operand_size, rex));
                     printf("+ 0x%ld\n", get_displacement(&inst[1], 32, 0));
                     break;
                 default:
