@@ -27,6 +27,7 @@ enum one_byte_opcodes{
     // Lea done
     OP_LEA = 0x8d, // load effective address
 
+    // Mov done
     OP_MOV_88 = 0x88, // 8 bit regs/mm - reg->rm
     OP_MOV_89 = 0x89, // 16,32,64 regs/mm - reg->rm
     OP_MOV_8A = 0x8a, // 8 bit regs/mm - rm->reg
@@ -40,10 +41,30 @@ enum one_byte_opcodes{
     OP_MOV_B0 = 0xb0, // 8 bit imm to reg 
     OP_MOV_B8 = 0xb8, // mov uses last 3 bits for register, b8-bf, moves imm to reg
     OP_MOV_C6 = 0xc6, // 8 bit imm to reg - use only r/m in modrm
-    OP_MOV_C7 = 0xc7, // 8 bit imm to mem - use only r/m in modrm
-    OP_OR = 0x9,
-    OP_POP = 0x58, // pop is 58-5f, last 3 bits are for register
-    OP_PUSH = 0x50, // push is 50-57, last 3 bits are for register
+    OP_MOV_C7 = 0xc7, // 16,32,64 rm imm16,32 
+
+    // Or - done
+    OP_OR_0C = 0x0c, // 8 AL imm8
+    OP_OR_0D = 0x0d, // 16,32,64 ax,eax,rax imm16,32 
+    OP_OR_80 = 0x80, // 8 bit rm imm8
+    OP_OR_81 = 0x81, // 16,32,64 rm imm16,32 
+    OP_OR_83 = 0x83, // 16,32,64 rm imm8 - imm8->rm
+    OP_OR_08 = 0x8, // 8bit regs/mm - reg->rm
+    OP_OR_09 = 0x9, // normal reg->rm
+    OP_OR_0A = 0xa, // 8 bit regs/mm - rm->reg 
+    OP_OR_0B = 0xb, // normal rm->reg 
+
+    // Pop-done
+    OP_POP_8F = 0x8f, // pop is 58-5f, last 3 bits are for register
+    OP_POP_58 = 0x58, // pop is 58-5f, last 3 bits are for register
+
+    // Push -done
+    OP_PUSH_FF = 0xff, // push 16,64 bit register 
+    OP_PUSH_6A = 0x6a, // push imm8 
+    OP_PUSH_68 = 0x68, // push imm16,32 
+    OP_PUSH_50 = 0x50, // push is 50-57, last 3 bits are for register
+
+    // TODO handle
     OP_PUSHA = 0x60, // push all 
     OP_POPA = 0x61, // pop all
     OP_SHL = 0xc1, // shift logical left always imm8
@@ -54,6 +75,10 @@ enum one_byte_opcodes{
 
 enum two_byte_opcodes{
     OP_JZJE_84 = 0x84, // jump if equal or zero (meaning if zf flag = 1)
+    OP_POP_A1 = 0xa1, // pop FS register
+    OP_POP_A9 = 0xa9, // pop GS register
+    OP_PUSH_A0 = 0xa0, // push FS register
+    OP_PUSH_A8 = 0xa8, // push GS register
     OP_RDTSC = 0x31, // read time stamp counter
 };
 
