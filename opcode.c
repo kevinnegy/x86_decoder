@@ -99,6 +99,18 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
             assert(0);
             return;
 
+        case OP_TEST_84:
+            // Test does no memory writing, skip calls 
+            //check_modrm_rm(&inst[1], 8, address_size, rex);
+            //check_modrm_reg(&inst[1], 8, address_size, rex);
+            return;
+
+        case OP_TEST_85:
+            // Test does no memory writing, skip calls 
+            //check_modrm_reg(&inst[1], 8, address_size, rex);
+            //check_modrm_rm(&inst[1], 8, address_size, rex);
+            return;
+
         // 8 bit operand case - rm (dest), reg
         case OP_ADD_00:
         case OP_MOV_88:
@@ -141,6 +153,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
         case OP_ADD_05:
         case OP_OR_0D:
         case OP_SUB_2D:
+        case OP_TEST_A9:
             get_register(0, operand_size, rex);
             if(operand_size == 64)
                 get_immediate(&inst[1], 32);
@@ -152,13 +165,11 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
         case OP_ADD_04:
         case OP_OR_0C:
         case OP_SUB_2C:
+        case OP_TEST_A8:
             get_register(0, 8, 0); // AL
             get_immediate(&inst[1], 8);
             return;
 
-        case OP_TEST_85:
-            // TODO handle checkmodrm and override prefixes
-            return;
         case OP_CALL_E8:
             printf("disp 0x%lx\n", get_displacement(&inst[1], 64, 5)); // 32 bit disp but sign extended
             return;
@@ -216,6 +227,8 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
                     check_modrm_rm(&inst[1], operand_size, address_size, rex);
                     get_immediate(&inst[2], 8);
                     return;
+                default:
+                    assert(0);
             }
             return;
 
@@ -231,6 +244,33 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
                     assert(0);
             }
             return;
+
+        case 0xF6:
+            switch(inst[1] & 0x38 >> 3){
+                case 0: // Test 
+                    // Test does no memory writing, skip modrm_rm call 
+                    //check_modrm_rm(&inst[1], 8, address_size, rex);
+                    get_immediate(&inst[2], 8);
+                    return;
+                default:
+                    assert(0);
+            }
+            return;
+
+        case 0xF7:
+            switch(inst[1] & 0x38 >> 3){
+                case 0: // Test
+                    // Test does no memory writing, skip modrm_rm call 
+                    //check_modrm_rm(&inst[1], operand_size, address_size, rex);
+                    if(operand_size == 64)
+                        get_immediate(&inst[2], 32);
+                    else
+                        get_immediate(&inst[2], operand_size);
+                default:
+                    assert(0);
+            }
+            return;
+
 
         // rm (dest), imm16,32
         case 0xFF: // Could be call(f) jmp(f) inc dec or push

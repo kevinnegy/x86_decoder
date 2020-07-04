@@ -75,9 +75,17 @@ enum one_byte_opcodes{
     OP_SUB_2A = 0x2a, // 8bit regs/mm - rm->reg  
     OP_SUB_2B = 0x2b, // normal rm->reg 
 
+
+    // Test - done, no memory writing, just ANDs operands and sets SF PF ZF flags
+    OP_TEST_A8 = 0xa8, // 8 AL imm8 
+    OP_TEST_A9 = 0xa9, // 16,32,64 ax,eax,rax imm16,32 
+    OP_TEST_F6 = 0xf6, // 8 bit rm imm8
+    OP_TEST_F7 = 0xf7, // 16,32,64 rm imm16,32 
+    OP_TEST_84 = 0x84, // 8bit regs/mm - reg->rm 
+    OP_TEST_85 = 0x85, // normal reg->rm 
+
     // TODO handle
     OP_SHL = 0xc1, // shift logical left always imm8
-    OP_TEST_85 = 0x85, // test = reg_1 & reg_2 -> SF, ZF, PF flags
 };
 
 enum two_byte_opcodes{
