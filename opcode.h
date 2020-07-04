@@ -27,7 +27,6 @@ enum one_byte_opcodes{
     // Lea done
     OP_LEA = 0x8d, // load effective address
 
-    // Mov done
     OP_MOV_88 = 0x88, // 8 bit regs/mm - reg->rm
     OP_MOV_89 = 0x89, // 16,32,64 regs/mm - reg->rm
     OP_MOV_8A = 0x8a, // 8 bit regs/mm - rm->reg
@@ -38,8 +37,8 @@ enum one_byte_opcodes{
     OP_MOV_A1 = 0xa1, // mov moffs16,32,64 to AX,EAX,RAX - moffs is seg:offset or just offset if REX.W 
     OP_MOV_A2 = 0xa2, // mov AL to moffs8 - moffs is seg:offset or just offset if REX.W 
     OP_MOV_A3 = 0xa3, // mov AX,EAX,RAX to moffs16,32,64 - moffs is seg:offset or just offset if REX.W 
-    OP_MOV_B0 = 0xb0, // 8 bit imm to reg 
-    OP_MOV_B8 = 0xb8, // mov uses last 3 bits for register, b8-bf, moves imm to reg
+    OP_MOV_B0 = 0xb0, // 8 bit imm to reg  (get reg from opcode B0-B7)
+    OP_MOV_B8 = 0xb8, // imm16,32,64 -> reg16,32,64 (get reg from opcode B8-BF)
     OP_MOV_C6 = 0xc6, // 8 bit imm to reg - use only r/m in modrm
     OP_MOV_C7 = 0xc7, // 16,32,64 rm imm16,32 
 
@@ -89,7 +88,9 @@ enum one_byte_opcodes{
 };
 
 enum two_byte_opcodes{
+    // TODO handle
     OP_JZJE_84 = 0x84, // jump if equal or zero (meaning if zf flag = 1)
+
     OP_POP_A1 = 0xa1, // pop FS register
     OP_POP_A9 = 0xa9, // pop GS register
     OP_PUSH_A0 = 0xa0, // push FS register

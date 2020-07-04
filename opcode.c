@@ -47,7 +47,7 @@ void check_second_opcode(unsigned char * inst, int operand_override, int address
     int operand_size = find_operand_size(operand_override, rex);
     int address_size = find_address_size(operand_override);
     switch(opcode){
-        case OP_JZJE_84: //TODO are tttn encodings necessary?
+        case OP_JZJE_84: 
         {
             // TODO handle
             int64_t disp = get_displacement(&inst[1], DEFAULT_BIT_MODE, 0);
@@ -61,6 +61,7 @@ void check_second_opcode(unsigned char * inst, int operand_override, int address
 
             return;
         }
+
         case OP_POP_A1:
         case OP_POP_A9:
         case OP_PUSH_A0:
@@ -182,7 +183,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
 
         // rm8 (dest), imm8
         case 0x80:
-            switch(inst[1] & 0x38 >> 3){
+            switch((inst[1] & 0x38) >> 3){
                 case 0: // Add
                 case 1: // Or
                 case 5: // Sub
@@ -196,7 +197,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
 
         // 16,32,64 rm and 16,32 immediate
         case 0x81:
-            switch(inst[1] & 0x38 >> 3){
+            switch((inst[1] & 0x38) >> 3){
                 case 0: // Add
                 case 1: // Or
                 case 5: // Sub
@@ -220,7 +221,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
             return;
             
         case 0x83:
-            switch(inst[1] & 0x38 >> 3){
+            switch((inst[1] & 0x38) >> 3){
                 case 0: // Add
                 case 1: // Or
                 case 5: // Sub
@@ -233,7 +234,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
             return;
 
         case 0x8F:
-            switch(inst[1] & 0x38 >> 3){
+            switch((inst[1] & 0x38) >> 3){
                 case 0: // Push
                     if(operand_size == 32)
                         operand_size = 64;
@@ -246,7 +247,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
             return;
 
         case 0xF6:
-            switch(inst[1] & 0x38 >> 3){
+            switch((inst[1] & 0x38) >> 3){
                 case 0: // Test 
                     // Test does no memory writing, skip modrm_rm call 
                     //check_modrm_rm(&inst[1], 8, address_size, rex);
@@ -258,7 +259,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
             return;
 
         case 0xF7:
-            switch(inst[1] & 0x38 >> 3){
+            switch((inst[1] & 0x38) >> 3){
                 case 0: // Test
                     // Test does no memory writing, skip modrm_rm call 
                     //check_modrm_rm(&inst[1], operand_size, address_size, rex);
@@ -274,7 +275,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
 
         // rm (dest), imm16,32
         case 0xFF: // Could be call(f) jmp(f) inc dec or push
-            switch(inst[1] & 0x38 >> 3){
+            switch((inst[1] & 0x38) >> 3){
                 case 2: // Call
                     check_modrm_rm(&inst[1], 64, address_size, rex);
                     return;
@@ -321,6 +322,16 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
 
     // Opcodes whose last 3 bits are for one register
     switch(opcode & 0xf8){
+        case OP_MOV_B0:
+            get_register(opcode & 0x7, 8, rex); 
+            get_immediate(&inst[1], 8);
+            return;
+
+        case OP_MOV_B8:
+            get_register(opcode & 0x7, operand_size, rex); 
+            get_immediate(&inst[1], operand_size);
+            return;
+
         case OP_POP_58:
         case OP_PUSH_50:
             if(operand_size == 32)
