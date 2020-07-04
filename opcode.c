@@ -103,6 +103,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
         case OP_ADD_00:
         case OP_MOV_88:
         case OP_OR_08:
+        case OP_SUB_28:
             check_modrm_rm(&inst[1], 8, address_size, rex);
             check_modrm_reg(&inst[1], 8, address_size, rex);
             return;
@@ -111,6 +112,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
         case OP_ADD_02:
         case OP_MOV_8A:
         case OP_OR_0A:
+        case OP_SUB_2A:
             check_modrm_reg(&inst[1], 8, address_size, rex);
             check_modrm_rm(&inst[1], 8, address_size, rex);
             return;
@@ -119,6 +121,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
         case OP_ADD_01:
         case OP_MOV_89:
         case OP_OR_09:
+        case OP_SUB_29:
             check_modrm_rm(&inst[1], operand_size, address_size, rex);
             check_modrm_reg(&inst[1], operand_size, address_size, rex);
             return;
@@ -128,6 +131,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
         case OP_LEA:
         case OP_MOV_8B:
         case OP_OR_0B:
+        case OP_SUB_2B:
             check_modrm_reg(&inst[1], operand_size, address_size, rex);
             check_modrm_rm(&inst[1], operand_size, address_size, rex);
             return;
@@ -136,6 +140,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
         // ax,eax,rax imm16,32
         case OP_ADD_05:
         case OP_OR_0D:
+        case OP_SUB_2D:
             get_register(0, operand_size, rex);
             if(operand_size == 64)
                 get_immediate(&inst[1], 32);
@@ -146,11 +151,11 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
         // AL imm8
         case OP_ADD_04:
         case OP_OR_0C:
+        case OP_SUB_2C:
             get_register(0, 8, 0); // AL
             get_immediate(&inst[1], 8);
             return;
 
-        case OP_SUB_2B:
         case OP_TEST_85:
             // TODO handle checkmodrm and override prefixes
             return;
@@ -169,6 +174,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
             switch(inst[1] & 0x38 >> 3){
                 case 0: // Add
                 case 1: // Or
+                case 5: // Sub
                     check_modrm_rm(&inst[1], 8, address_size, rex);
                     get_immediate(&inst[2], 8);
                     return;
@@ -182,6 +188,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
             switch(inst[1] & 0x38 >> 3){
                 case 0: // Add
                 case 1: // Or
+                case 5: // Sub
                     check_modrm_rm(&inst[1], operand_size, address_size, rex);
                     if(operand_size == 64)
                         get_immediate(&inst[2], 32);

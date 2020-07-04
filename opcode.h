@@ -64,12 +64,19 @@ enum one_byte_opcodes{
     OP_PUSH_68 = 0x68, // push imm16,32 
     OP_PUSH_50 = 0x50, // push is 50-57, last 3 bits are for register
 
+    // Sub -done
+    OP_SUB_2C = 0x2c,  // 8 AL imm8
+    OP_SUB_2D = 0x2d,  // 16,32,64 ax,eax,rax imm16,32 
+    OP_SUB_80 = 0x80, // 8 bit rm imm8
+    OP_SUB_81 = 0x81, // 16,32,64 rm imm16,32 
+    OP_SUB_83 = 0x83, // 16,32,64 rm imm8 - imm8->rm
+    OP_SUB_28 = 0x28, // 8bit regs/mm - reg->rm  
+    OP_SUB_29 = 0x29, // normal reg->rm
+    OP_SUB_2A = 0x2a, // 8bit regs/mm - rm->reg  
+    OP_SUB_2B = 0x2b, // normal rm->reg 
+
     // TODO handle
-    OP_PUSHA = 0x60, // push all 
-    OP_POPA = 0x61, // pop all
     OP_SHL = 0xc1, // shift logical left always imm8
-    OP_SUB_83 = 0x83, 
-    OP_SUB_2B = 0x2b, 
     OP_TEST_85 = 0x85, // test = reg_1 & reg_2 -> SF, ZF, PF flags
 };
 
