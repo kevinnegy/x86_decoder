@@ -85,6 +85,7 @@ enum one_byte_opcodes{
     OP_MOV_B8 = 0xb8, // imm16,32,64 -> reg16,32,64 (get reg from opcode B8-BF)
     OP_MOV_C6 = 0xc6, // 8 bit imm to reg - use only r/m in modrm
     OP_MOV_C7 = 0xc7, // 16,32,64 rm imm16,32 
+    OP_MOVSX_63 = 0x63, // 16,32,64 regs/mm - rm->reg (sign extension move)
 
     // Neg -done 
     OP_NEG_F6 = 0xf6, // 8 bit rm 
@@ -113,6 +114,12 @@ enum one_byte_opcodes{
     OP_PUSH_6A = 0x6a, // push imm8 
     OP_PUSH_68 = 0x68, // push imm16,32 
     OP_PUSH_50 = 0x50, // push is 50-57, last 3 bits are for register
+
+    // Return
+    OP_RET_C3 = 0xc3, // near return
+    OP_RET_CB = 0xcb, // far return
+    OP_RET_C2 = 0xc2, // near return, pop imm16 
+    OP_RET_CA = 0xca, // far return, pop imm16 
 
     // SHL - done (SHL and SAL are the same)
     OP_SHL_C0 = 0xc0, // 8 bit rm shift imm8 number of times 
@@ -156,6 +163,17 @@ enum one_byte_opcodes{
     OP_TEST_F7 = 0xf7, // 16,32,64 rm imm16,32 
     OP_TEST_84 = 0x84, // 8bit regs/mm - reg->rm 
     OP_TEST_85 = 0x85, // normal reg->rm 
+    
+    // XOR -done
+    OP_XOR_34 = 0x34, // 8 AL imm8 
+    OP_XOR_35 = 0x35, // 16,32,64 ax,eax,rax imm16,32 
+    OP_XOR_80 = 0x80, // 8 bit rm imm8
+    OP_XOR_81 = 0x81, // 16,32,64 rm imm16,32 
+    OP_XOR_83 = 0x83, // 16,32,64 rm imm8 - imm8->rm
+    OP_XOR_30 = 0x30, // 8bit regs/mm - reg->rm  
+    OP_XOR_31 = 0x31, // normal reg->rm
+    OP_XOR_32 = 0x32, // 8bit regs/mm - rm->reg  
+    OP_XOR_33 = 0x33, // normal rm->reg 
 };
 
 enum two_byte_opcodes{
@@ -163,6 +181,8 @@ enum two_byte_opcodes{
 
     // Done
     OP_JCC_80 = 0x80, // 64 bit mode JCC instructions are 80-8F (see one byte JCC instructions for description)
+    OP_MOVSX_BE = 0xbe, // rm8 -> reg16,32,64
+    OP_MOVSX_BF = 0xbf, // rm16 -> reg32,64
     OP_NOP_1F = 0x1f, // NOP multi byte (rm32,64)
     OP_POP_A1 = 0xa1, // pop FS register
     OP_POP_A9 = 0xa9, // pop GS register

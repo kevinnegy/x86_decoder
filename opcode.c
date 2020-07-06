@@ -63,6 +63,17 @@ void check_second_opcode(unsigned char * inst, int operand_override, int address
             check_modrm_reg(&inst[1], operand_size, address_size, rex);
             return;
 
+        case OP_MOVSX_BE:
+            check_modrm_reg(&inst[1], operand_size, address_size, rex);
+            check_modrm_rm(&inst[1], 8, address_size, rex);
+            return;
+
+        case OP_MOVSX_BF:
+            assert(operand_size != 16);
+            check_modrm_reg(&inst[1], operand_size, address_size, rex);
+            check_modrm_rm(&inst[1], 16, address_size, rex);
+            return;
+
         case OP_RDTSC:
             return;
 
@@ -137,6 +148,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
         case OP_MOV_88:
         case OP_OR_08:
         case OP_SUB_28:
+        case OP_XOR_30:
             check_modrm_rm(&inst[1], 8, address_size, rex);
             check_modrm_reg(&inst[1], 8, address_size, rex);
             return;
@@ -148,6 +160,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
         case OP_MOV_8A:
         case OP_OR_0A:
         case OP_SUB_2A:
+        case OP_XOR_32:
             check_modrm_reg(&inst[1], 8, address_size, rex);
             check_modrm_rm(&inst[1], 8, address_size, rex);
             return;
@@ -159,6 +172,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
         case OP_MOV_89:
         case OP_OR_09:
         case OP_SUB_29:
+        case OP_XOR_31:
             check_modrm_rm(&inst[1], operand_size, address_size, rex);
             check_modrm_reg(&inst[1], operand_size, address_size, rex);
             return;
@@ -169,8 +183,10 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
         case OP_CMP_3B:
         case OP_LEA:
         case OP_MOV_8B:
+        case OP_MOVSX_63:
         case OP_OR_0B:
         case OP_SUB_2B:
+        case OP_XOR_33:
             check_modrm_reg(&inst[1], operand_size, address_size, rex);
             check_modrm_rm(&inst[1], operand_size, address_size, rex);
             return;
@@ -183,6 +199,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
         case OP_OR_0D:
         case OP_SUB_2D:
         case OP_TEST_A9:
+        case OP_XOR_35:
             get_register(0, operand_size, rex);
             if(operand_size == 64)
                 get_immediate(&inst[1], 32);
@@ -197,6 +214,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
         case OP_OR_0C:
         case OP_SUB_2C:
         case OP_TEST_A8:
+        case OP_XOR_34:
             get_register(0, 8, 0); // AL
             get_immediate(&inst[1], 8);
             return;
@@ -218,6 +236,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
                 case 1: // Or
                 case 4: // AND
                 case 5: // Sub
+                case 6: // XOR 
                 case 7: // CMP
                     check_modrm_rm(&inst[1], 8, address_size, rex);
                     get_immediate(&inst[2], 8);
@@ -234,6 +253,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
                 case 1: // Or
                 case 4: // AND
                 case 5: // Sub
+                case 6: // XOR 
                 case 7: // CMP
                     check_modrm_rm(&inst[1], operand_size, address_size, rex);
                     if(operand_size == 64)
@@ -260,6 +280,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
                 case 1: // Or
                 case 4: // AND
                 case 5: // Sub
+                case 6: // XOR 
                 case 7: // CMP
                     check_modrm_rm(&inst[1], operand_size, address_size, rex);
                     get_immediate(&inst[2], 8);
@@ -432,6 +453,17 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
         case OP_PUSH_68:
             get_immediate(&inst[1], operand_size);
             printf("memory access [rsp]\n"); 
+            return;
+
+        case OP_RET_C3:
+        case OP_RET_CB:
+            printf("RETURN STATEMENT");
+            return;
+
+        case OP_RET_C2:
+        case OP_RET_CA:
+            get_immediate(&inst[1], 16);
+            printf("RETURN STATEMENT");
             return;
     }
 
