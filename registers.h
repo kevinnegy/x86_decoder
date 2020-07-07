@@ -106,6 +106,45 @@ enum cntrl_regs{
     CR8, 
 };
 
+// 64 bit regs
+enum mm_regs{
+    MM0,
+    MM1, 
+    MM2, 
+    MM3, 
+    MM4, 
+    MM5, 
+    MM6, 
+    MM7, 
+    MM8, 
+    MM9, 
+    MM10, 
+    MM11, 
+    MM12, 
+    MM13, 
+    MM14, 
+    MM15, 
+};
+
+// 128 bit regs
+enum xmm_regs{
+    XMM0,
+    XMM1, 
+    XMM2, 
+    XMM3, 
+    XMM4, 
+    XMM5, 
+    XMM6, 
+    XMM7, 
+    XMM8, 
+    XMM9, 
+    XMM10, 
+    XMM11, 
+    XMM12, 
+    XMM13, 
+    XMM14, 
+    XMM15, 
+};
 
 char * get_register(int index, int mode, int rex);
 

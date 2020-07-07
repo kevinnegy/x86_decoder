@@ -38,6 +38,16 @@ static char * get_cntrl_register(int index){
     return strings[index];
 }
 
+static char * get_mm_register(int index){
+    char * strings[] = {"mm0", "mm1", "mm2", "mm3", "mm4", "mm5", "mm6", "mm7", "mm8", "mm9", "mm10", "mm11", "mm12", "mm13", "mm14", "mm15"};
+    return strings[index];
+}
+
+static char * get_xmm_register(int index){
+    char * strings[] = {"xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6", "xmm7", "xmm8", "xmm9", "xmm10", "xmm11", "xmm12", "xmm13", "xmm14", "xmm15"};
+    return strings[index];
+}
+
 char * get_register(int index, int mode, int rex){
     if(index < 0 || index > 15)
         assert(0);
@@ -61,6 +71,12 @@ char * get_register(int index, int mode, int rex){
     else if(mode == 2){ // internal identification of cntrl_regs
         if(index > 9) assert(0);
         return get_cntrl_register(index);
+    }
+    else if(mode == 3){
+        return get_mm_register(index);
+    }
+    else if(mode == 4){
+        return get_xmm_register(index);
     }
     return NULL;        
 }

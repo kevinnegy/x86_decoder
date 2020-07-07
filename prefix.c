@@ -17,12 +17,16 @@ void check_prefix(unsigned char * inst, int operand_override, int address_overri
         case PREFIX_FS:
         case PREFIX_GS:
             check_prefix(&inst[1], operand_override, address_override);
+            return;
         case PREFIX_OP_SIZE_OVERRIDE:
             check_prefix(&inst[1], 1, address_override);
+            return;
         case PREFIX_ADDR_SIZE_OVERRIDE:
             check_prefix(&inst[1], operand_override, 1);
+            return;
         default:
             check_rex(inst, operand_override, address_override);
+            return;
     }
     return;
 }
