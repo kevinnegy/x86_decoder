@@ -26,7 +26,6 @@ enum one_byte_opcodes{
     OP_AND_22 = 0x22, // 8 modrm - rm->reg
     OP_AND_23 = 0x23, // 16,32,64 modrm - rm->reg
     
-
     // Call -done 
     OP_CALL_E8 = 0xe8, // disp 32-> 64 bit sign extend
     OP_CALL_FF = 0xff, // rm64 or jump to different location
@@ -42,24 +41,11 @@ enum one_byte_opcodes{
     OP_CMP_3A = 0x3a, // 8 modrm - rm->reg
     OP_CMP_3B = 0x3b, // 16,32,64 modrm - rm->reg
 
+    OP_CBW_98 = 0x98, // convert byte to word AL->AX, word to double AX->EAX, double to quad EAX->RAX 
+
     // JCC -done (see opcode.c for which flags are in the condition)
     // TODO handle instructions that default to 64 bit operands in long mode like jcc
-    OP_JCC_70 = 0x70,
-    OP_JCC_71 = 0x71,
-    OP_JCC_72 = 0x72,
-    OP_JCC_73 = 0x73,
-    OP_JCC_74 = 0x74,
-    OP_JCC_75 = 0x75,
-    OP_JCC_76 = 0x76,
-    OP_JCC_77 = 0x77,
-    OP_JCC_78 = 0x78,
-    OP_JCC_79 = 0x79,
-    OP_JCC_7a = 0x7a,
-    OP_JCC_7b = 0x7b,
-    OP_JCC_7c = 0x7c,
-    OP_JCC_7d = 0x7d,
-    OP_JCC_7e = 0x7e,
-    OP_JCC_7f = 0x7f,
+    OP_JCC_70 = 0x70, // JCC covers 70-7F
     OP_JCC_E3 = 0xe3, // JECXZ or JRCXZ (ECX/RCX = 0)
 
     // Jmp -done
@@ -177,18 +163,44 @@ enum one_byte_opcodes{
 };
 
 enum two_byte_opcodes{
+    // TODO handle
     OP_CMOV_44 = 0x44, // CMOVZ
 
+    // Bit test (stores answer in CF flag)
+    OP_BT_A3 = 0xa3, // normal reg -> rm
+    OP_BT_BA = 0xba, // normal imm8 -> rm
+
     // Done
+    OP_CPUID_A2 = 0xa2, // Gets CPU info into registers based on what EAX stores
     OP_JCC_80 = 0x80, // 64 bit mode JCC instructions are 80-8F (see one byte JCC instructions for description)
-    OP_MOVSX_BE = 0xbe, // rm8 -> reg16,32,64
+
+    // TODO handle vex
+    OP_MOVDQU_6F = 0x6f, // xmm -> xmm/mm 
+    OP_MOVDQU_7F = 0x7f, // xmm/mm -> xmm 
+
+    // MOVS/ZX -done
+    OP_MOVSX_BE = 0xbe, // rm8 -> reg16,32,64 (sign extend)
     OP_MOVSX_BF = 0xbf, // rm16 -> reg32,64
+    OP_MOVZX_B6 = 0xb6, // rm8 -> reg16,32,64 (zero extend)
+    OP_MOVZX_B7 = 0xb7, // rm16 -> reg32,64
+
+    // Done
     OP_NOP_1F = 0x1f, // NOP multi byte (rm32,64)
     OP_POP_A1 = 0xa1, // pop FS register
     OP_POP_A9 = 0xa9, // pop GS register
     OP_PUSH_A0 = 0xa0, // push FS register
     OP_PUSH_A8 = 0xa8, // push GS register
+
+    // PXOR // TODO handle vex
+    OP_PXOR_EF = 0xef, // logical xor
+
     OP_RDTSC = 0x31, // read time stamp counter
+
+    // Set on condition
+    OP_SETCC_90 = 0x90, // SETCC covers 90-9F
+
+    OP_SYSCALL_05 = 0x05, // Fast syscall, modifies a lot of registers but not stack pointer
+    OP_XGETBV_01 = 0x01, // get value of control register EDX:EAX <- XCR[ECX]
 };
 
 void check_opcode(unsigned char * inst, int operand_override, int address_override, int rex);
