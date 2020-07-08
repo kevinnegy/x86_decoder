@@ -43,6 +43,12 @@ enum one_byte_opcodes{
 
     OP_CBW_98 = 0x98, // convert byte to word AL->AX, word to double AX->EAX, double to quad EAX->RAX 
 
+    // IMUL -signed multiply
+    OP_IMUL_F6 = 0xf6, // AX <- AL * rm8 
+    OP_IMUL_F7 = 0xf7, // rm 16,32,64 (same form as F6)
+    OP_IMUL_6B = 0x6b, // imm8 * rm16,32,64 -> reg 16,32,64 
+    OP_IMUL_69 = 0x69, // imm16,32 * rm16,32,64 -> reg 16,32,64 
+
     // JCC -done (see opcode.c for which flags are in the condition)
     // TODO handle instructions that default to 64 bit operands in long mode like jcc
     OP_JCC_70 = 0x70, // JCC covers 70-7F
@@ -175,7 +181,8 @@ enum two_byte_opcodes{
 
     // Done
     OP_CPUID_A2 = 0xa2, // Gets CPU info into registers based on what EAX stores
-    OP_JCC_80 = 0x80, // 64 bit mode JCC instructions are 80-8F (see one byte JCC instructions for description)
+    OP_JCC_80 = 0x80, // 64 bit mode JCC instructions are 80-8F (see one byte JCC instructions)
+    OP_IMUL_AF = 0xaf, // normal rm -> reg
 
     // TODO handle vex
     OP_MOVDQU_6F = 0x6f, // xmm -> xmm/mm 

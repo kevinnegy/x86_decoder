@@ -121,6 +121,7 @@ void check_second_opcode(unsigned char * inst, int operand_override, int address
 
         // Normal rm->reg
         case OP_BSF_BC:
+        case OP_IMUL_AF:
             check_modrm_reg(&inst[1], operand_size, address_size, rex);
             check_modrm_rm(&inst[1], operand_size, address_size, rex);
             return;
@@ -136,6 +137,21 @@ void check_second_opcode(unsigned char * inst, int operand_override, int address
             assert(operand_size != 16);
             check_modrm_reg(&inst[1], operand_size, address_size, rex);
             check_modrm_rm(&inst[1], 16, address_size, rex);
+            return;
+
+        case OP_IMUL_6B:
+            check_modrm_reg(&inst[1], operand_size, address_size, rex);
+            check_modrm_rm(&inst[1], operand_size, address_size, rex);
+            get_immediate(&inst[2], 8); 
+            return;
+
+        case OP_IMUL_69:
+            check_modrm_reg(&inst[1], operand_size, address_size, rex);
+            check_modrm_rm(&inst[1], operand_size, address_size, rex);
+            if(operand_size == 64)
+                get_immediate(&inst[2], 32); 
+            else
+                get_immediate(&inst[2], operand_size);
             return;
 
         case OP_RDTSC:
@@ -276,7 +292,6 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
             check_modrm_reg(&inst[1], operand_size, address_size, rex);
             check_modrm_rm(&inst[1], operand_size, address_size, rex);
             return;
-
 
         // ax,eax,rax imm16,32
         case OP_ADD_05:
@@ -474,6 +489,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
                     get_immediate(&inst[2], 8);
                     return;
                 case 3: // Neg rm
+                case 5: // IMUL rm
                     check_modrm_rm(&inst[1], 8, address_size, rex);
                     return;
                 default:
@@ -491,7 +507,8 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
                     else
                         get_immediate(&inst[2], operand_size);
                     return;
-                case 3:
+                case 3: // Neg
+                case 5: // IMUL
                     check_modrm_rm(&inst[1], operand_size, address_size, rex);
                     return;
                 default:
