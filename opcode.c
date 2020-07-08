@@ -83,7 +83,30 @@ void check_second_opcode(unsigned char * inst, int operand_override, int address
             check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
             return;
 
+        case OP_PCMPEQ_74:
+        case OP_PCMPEQ_75:
+        case OP_PCMPEQ_76:
+            if(operand_override == 1){ // 66 prefix
+                check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
+                check_modrm_rm(&inst[1], 4, address_size, rex);
+            }
+            else{
+                check_modrm_reg(&inst[1], 3, address_size, rex); // operand_size should be 3 for the mm regs
+                check_modrm_rm(&inst[1], 3, address_size, rex);
+            }
+            return;
+
+        case OP_PMOVMSK_D7:
+            check_modrm_reg(&inst[1], 64, address_size, rex); // operand_size should be 4 for the xmm regs
+            if(operand_override == 1){ // 66 prefix
+                check_modrm_rm(&inst[1], 4, address_size, rex);
+            }
+            else{
+                check_modrm_rm(&inst[1], 3, address_size, rex);
+            }
+            return;
             
+             
 
         case OP_BT_BA:
             check_modrm_rm(&inst[1], operand_size, address_size, rex);
@@ -94,6 +117,12 @@ void check_second_opcode(unsigned char * inst, int operand_override, int address
         case OP_CMOV_44:
             check_modrm_rm(&inst[1], operand_size, address_size, rex);
             check_modrm_reg(&inst[1], operand_size, address_size, rex);
+            return;
+
+        // Normal rm->reg
+        case OP_BSF_BC:
+            check_modrm_reg(&inst[1], operand_size, address_size, rex);
+            check_modrm_rm(&inst[1], operand_size, address_size, rex);
             return;
 
         case OP_MOVSX_BE:

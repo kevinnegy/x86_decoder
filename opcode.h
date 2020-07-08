@@ -170,6 +170,9 @@ enum two_byte_opcodes{
     OP_BT_A3 = 0xa3, // normal reg -> rm
     OP_BT_BA = 0xba, // normal imm8 -> rm
 
+    // BSF - bit scan forward
+    OP_BSF_BC = 0xbc, // normal rm -> reg
+
     // Done
     OP_CPUID_A2 = 0xa2, // Gets CPU info into registers based on what EAX stores
     OP_JCC_80 = 0x80, // 64 bit mode JCC instructions are 80-8F (see one byte JCC instructions for description)
@@ -184,8 +187,19 @@ enum two_byte_opcodes{
     OP_MOVZX_B6 = 0xb6, // rm8 -> reg16,32,64 (zero extend)
     OP_MOVZX_B7 = 0xb7, // rm16 -> reg32,64
 
-    // Done
+    // NOP - done 
     OP_NOP_1F = 0x1f, // NOP multi byte (rm32,64)
+
+    // PCMPEQ - compare packed data for equal
+    // TODO handle vex
+    OP_PCMPEQ_74 = 0x74, // either compare all (1)bytes in 64/128 bit data or
+    OP_PCMPEQ_75 = 0x75, // (2) words
+    OP_PCMPEQ_76 = 0x76, // (3) doublewords 
+
+    // PMOVMSK // TODO handle vex
+    OP_PMOVMSK_D7 = 0xd7, // mm(64) -> reg(32 or 64) or xmm(128) -> reg(32 or 64) // 64 bit operand size is default in 64 bit mode
+
+    // Done
     OP_POP_A1 = 0xa1, // pop FS register
     OP_POP_A9 = 0xa9, // pop GS register
     OP_PUSH_A0 = 0xa0, // push FS register
