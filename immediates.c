@@ -1,6 +1,17 @@
+#include <stdio.h>
 #include <assert.h>
 #include "x86_decoder.h" // For DEFAULT_BIT_MODE
 #include "immediates.h"
+
+void get_ones_comp_disp(unsigned char *inst, int disp_len, int instr_len){
+    int64_t disp = get_displacement(inst, disp_len, instr_len);
+    
+    if(disp & ((int64_t) 1 << disp_len))
+        printf("-0x%lx]\n",~(disp-1));
+    else
+        printf("+0x%lx]\n", disp);
+    return;
+}
 
 // Use signed ints because displacement can be positive or negative in relative addressing
 int32_t calc_displacement(unsigned char * displacement, int num_bytes){

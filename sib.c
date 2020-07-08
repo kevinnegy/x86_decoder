@@ -15,40 +15,34 @@ void check_sib(unsigned char * inst, int operand_size, int rex){
         assert(operand_size == 64);
         u_int8_t rex_x = (rex & REX_X) << 2; 
         u_int8_t rex_b = (rex & REX_B) << 3;
-        base = rex_x & base;
-        index = rex_b & index;
+        base = rex_b | base;
+        index = rex_x | index;
     }
 
+    operand_size = 64; 
+
     char * base_reg = get_register(base, operand_size, rex); 
+    if (base == 5)
+        printf("memory access [0");
+    else
+        printf("memory access [%s", base_reg);
 
     int index_no_rex = index & 0x7; // Ignore REX ext bit for switch
     switch(scale){
         case 0:
             switch(index_no_rex){ 
+
                 case 0:
                 case 1:
                 case 2:
                 case 3:
-                    printf("memory access [%s] + ", get_register(index, operand_size, rex));
-
-                    if (base == 5)
-                        break;
-
-                    printf("%s\n", base_reg);
-                    break;
-
+                    printf("+%s", get_register(index, operand_size, rex));
                 case 4: // Do nothing!
                     break;
-
                 case 5:
                 case 6:
                 case 7:
-                    printf("memory access [%s] + ", get_register(index, operand_size, rex));
-
-                    if (base == 5)
-                        break;
-
-                    printf("%s\n", base_reg);
+                    printf("+%s", get_register(index, operand_size, rex));
                     break;
 
                 default:
@@ -63,14 +57,12 @@ void check_sib(unsigned char * inst, int operand_size, int rex){
                 case 1:
                 case 2:
                 case 3:
-                    printf("memory access [%s * 2] + ", get_register(index, operand_size, rex));
+                    printf("%s * 2", get_register(index, operand_size, rex));
 
                     if (base == 5){
-                        printf("[EBP] + ");
+                        printf("+EBP]");
                         break;
                     }
-
-                    printf("%s\n", base_reg);
                     break;
 
                 case 4: // Do nothing!
@@ -79,14 +71,12 @@ void check_sib(unsigned char * inst, int operand_size, int rex){
                 case 5:
                 case 6:
                 case 7:
-                    printf("memory access [%s * 2] + ", get_register(index, operand_size, rex));
+                    printf("%s * 2", get_register(index, operand_size, rex));
 
                     if (base == 5){
-                        printf("[EBP] + ");
+                        printf("+EBP]");
                         break;
                     }
-
-                    printf("%s\n", base_reg);
                     break;
 
                 default:
@@ -101,30 +91,25 @@ void check_sib(unsigned char * inst, int operand_size, int rex){
                 case 1:
                 case 2:
                 case 3:
-                    printf("memory access [%s * 4] + ", get_register(index, operand_size, rex));
+                    printf("%s * 4", get_register(index, operand_size, rex));
 
                     if (base == 5){
-                        printf("[EBP] + ");
+                        printf("+EBP]");
                         break;
                     }
-
-                    printf("%s\n", base_reg);
                     break;
-
                 case 4: // Do nothing!
                     break;
 
                 case 5:
                 case 6:
                 case 7:
-                    printf("memory access [%s * 4] + ", get_register(index, operand_size, rex));
+                    printf("%s * 4", get_register(index, operand_size, rex));
 
                     if (base == 5){
-                        printf("[EBP] + ");
+                        printf("+EBP]");
                         break;
                     }
-
-                    printf("%s\n", base_reg);
                     break;
 
                 default:
@@ -139,12 +124,12 @@ void check_sib(unsigned char * inst, int operand_size, int rex){
                 case 1:
                 case 2:
                 case 3:
-                    printf("memory access [%s * 8] + ", get_register(index, operand_size, rex));
+                    printf("memory access [%s * 8", get_register(index, operand_size, rex));
 
                     if (base == 5)
-                        assert(0);
+                        return;
 
-                    printf("%s\n", base_reg);
+                    printf("+%s]\n", base_reg);
                     break;
 
                 case 4: // Do nothing!
@@ -153,12 +138,12 @@ void check_sib(unsigned char * inst, int operand_size, int rex){
                 case 5:
                 case 6:
                 case 7:
-                    printf("memory access [%s * 8] + ", get_register(index, operand_size, rex));
+                    printf("memory access [%s * 8", get_register(index, operand_size, rex));
 
                     if (base == 5)
-                        assert(0);
+                        return;
 
-                    printf("%s\n", base_reg);
+                    printf("+%s]\n", base_reg);
                     break;
 
                 default:

@@ -48,7 +48,7 @@ void modrm_rm_16(unsigned char * inst, int operand_size, int address_size){
                     printf("memory access [%s]\n", get_effective_addr_16(modrm_rm));
                     break;
                 case 6:
-                    printf("disp 0x%ld\n", get_displacement(&inst[1], operand_size, 0));
+                    printf("disp 0x%lx\n", get_displacement(&inst[1], operand_size, 0));
                     break;
                 case 7:
                     printf("memory access [%s]\n", get_effective_addr_16(modrm_rm));
@@ -69,8 +69,8 @@ void modrm_rm_16(unsigned char * inst, int operand_size, int address_size){
                 case 5:
                 case 6:
                 case 7:
-                    printf("memory access [%s] +", get_effective_addr_16(modrm_rm));
-                    printf("disp 0x%ld\n", get_displacement(&inst[1], 8, 0));
+                    printf("memory access [%s", get_effective_addr_16(modrm_rm));
+                    get_ones_comp_disp(&inst[1], 8, 0);
                     break;
                 default:
                     assert(0);
@@ -88,8 +88,8 @@ void modrm_rm_16(unsigned char * inst, int operand_size, int address_size){
                 case 5:
                 case 6:
                 case 7:
-                    printf("memory access [%s] +", get_effective_addr_16(modrm_rm));
-                    printf("disp 0x%ld\n", get_displacement(&inst[1], operand_size, 0));
+                    printf("memory access [%s", get_effective_addr_16(modrm_rm));
+                    get_ones_comp_disp(&inst[1], operand_size, 0);
                     break;
                 default:
                     assert(0);
@@ -142,7 +142,8 @@ void check_modrm_rm(unsigned char * inst, int operand_size, int address_size, in
                     check_sib(&inst[1], operand_size, rex); 
                     break;
                 case 5:
-                    printf("memory access [rip+0x%lx]\n", get_displacement(&inst[1], 32, 0));
+                    printf("memory access [rip");
+                    get_ones_comp_disp(&inst[1], 32, 0);
                     break;
                 case 6:
                 case 7:
@@ -160,18 +161,18 @@ void check_modrm_rm(unsigned char * inst, int operand_size, int address_size, in
                 case 1:
                 case 2:
                 case 3:
-                    printf("memory access [%s] + ", get_register(modrm_rm, operand_size, rex));
-                    printf("0x%ld\n", get_displacement(&inst[1], 8, 0));
+                    printf("memory access [%s", get_register(modrm_rm, operand_size, rex));
+                    get_ones_comp_disp(&inst[1], 8, 0);
                     break;
                 case 4:
                     check_sib(&inst[1], operand_size, rex); 
-                    printf("0x%ld\n", get_displacement(&inst[2], 8, 0));
+                    get_ones_comp_disp(&inst[2], 8, 0);
                     break;
                 case 5:
                 case 6:
                 case 7:
-                    printf("memory access [%s] + ", get_register(modrm_rm, operand_size, rex));
-                    printf("0x%ld\n", get_displacement(&inst[1], 8, 0));
+                    printf("memory access [%s", get_register(modrm_rm, operand_size, rex));
+                    get_ones_comp_disp(&inst[1], 8, 0);
                     break;
                 default:
                     assert(0);
@@ -185,18 +186,18 @@ void check_modrm_rm(unsigned char * inst, int operand_size, int address_size, in
                 case 1:
                 case 2:
                 case 3:
-                    printf("memory access [%s]", get_register(modrm_rm, operand_size, rex));
-                    printf("+ 0x%ld\n", get_displacement(&inst[1], 32, 0));
+                    printf("memory access [%s", get_register(modrm_rm, operand_size, rex));
+                    get_ones_comp_disp(&inst[1], 32, 0);
                     break;
                 case 4:
                     check_sib(&inst[1], operand_size, rex); 
-                    printf("0x%ld\n", get_displacement(&inst[2], 32, 0));
+                    get_ones_comp_disp(&inst[2], 32, 0);
                     break;
                 case 5:
                 case 6:
                 case 7:
-                    printf("memory access [%s]", get_register(modrm_rm, operand_size, rex));
-                    printf("+ 0x%ld\n", get_displacement(&inst[1], 32, 0));
+                    printf("memory access [%s", get_register(modrm_rm, operand_size, rex));
+                    get_ones_comp_disp(&inst[1], 32, 0);
                     break;
                 default:
                     assert(0);
