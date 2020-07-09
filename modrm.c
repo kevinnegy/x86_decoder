@@ -122,11 +122,11 @@ void check_modrm_rm(unsigned char * inst, int operand_size, int address_size, in
 
     if(rex & REX_W){
         assert(operand_size == 64);
-
-        // Get extension bit from rex prefix
-        u_int8_t rex_b = (rex & REX_B) << 3;
-        modrm_rm = modrm_rm | rex_b;
     }
+
+    // Get extension bit from rex prefix (even if REX.W not set, registers can still be extended in 64 bit mode
+    u_int8_t rex_b = (rex & REX_B) << 3;
+    modrm_rm = modrm_rm | rex_b;
 
     int modrm_rm_no_rex = modrm_rm & 0x7;
     switch(mod){
@@ -139,7 +139,9 @@ void check_modrm_rm(unsigned char * inst, int operand_size, int address_size, in
                     printf("memory access [%s]\n", get_register(modrm_rm, operand_size, rex));
                     break;
                 case 4:
+                    printf("memory access [");
                     check_sib(&inst[1], operand_size, rex); 
+                    printf("]");
                     break;
                 case 5:
                     printf("memory access [rip");
@@ -165,6 +167,7 @@ void check_modrm_rm(unsigned char * inst, int operand_size, int address_size, in
                     get_ones_comp_disp(&inst[1], 8, 0);
                     break;
                 case 4:
+                    printf("memory access [");
                     check_sib(&inst[1], operand_size, rex); 
                     get_ones_comp_disp(&inst[2], 8, 0);
                     break;
@@ -190,6 +193,7 @@ void check_modrm_rm(unsigned char * inst, int operand_size, int address_size, in
                     get_ones_comp_disp(&inst[1], 32, 0);
                     break;
                 case 4:
+                    printf("memory access [");
                     check_sib(&inst[1], operand_size, rex); 
                     get_ones_comp_disp(&inst[2], 32, 0);
                     break;

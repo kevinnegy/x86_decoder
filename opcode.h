@@ -79,6 +79,10 @@ enum one_byte_opcodes{
     OP_MOV_C7 = 0xc7, // 16,32,64 rm imm16,32 
     OP_MOVSX_63 = 0x63, // 16,32,64 regs/mm - rm->reg (sign extension move)
 
+    // MUL
+    OP_MUL_F6 = 0xf6, // AX <- AL * rm8 
+    OP_MUL_F7 = 0xf7, // rm 16,32,64 (same form as F6)
+
     // Neg -done 
     OP_NEG_F6 = 0xf6, // 8 bit rm 
     OP_NEG_F7 = 0xf7, // 16,32,64 bit rm 
@@ -129,6 +133,16 @@ enum one_byte_opcodes{
     OP_SAR_D2 = 0xd2, // 8 bit rm shift CL register number of times 
     OP_SAR_D3 = 0xd3, // 16,32,64 bit rm shift CL register number of times 
     
+    OP_SBB_1C = 0x1c, // 8 AL imm8
+    OP_SBB_1D = 0x1d, // 16,32,64 ax,eax,rax imm16,32 
+    OP_SBB_80 = 0x80, // 8 modrm imm8 - imm8->rm8
+    OP_SBB_81 = 0x81, // 16,32,64 rm imm16,32 - imm8->rm
+    OP_SBB_83 = 0x83, // 16,32,64 rm imm8 - imm8->rm
+    OP_SBB_18 = 0x18, // 8 modrm - reg->rm
+    OP_SBB_19 = 0x19, // 16,32,64 modrm - reg->rm
+    OP_SBB_1A = 0x1a, // 8 modrm - rm->reg
+    OP_SBB_1B = 0x1b, // 16,32,64 modrm - rm->reg
+
     // SHR -done (unsigned) 
     OP_SHR_C0 = 0xc0, // 8 bit rm shift imm8 number of times 
     OP_SHR_C1 = 0xc1, // 16,32,64 bit rm shift imm8 # of times
@@ -156,6 +170,11 @@ enum one_byte_opcodes{
     OP_TEST_84 = 0x84, // 8bit regs/mm - reg->rm 
     OP_TEST_85 = 0x85, // normal reg->rm 
     
+    // XCHG - done
+    OP_XCHG_90 = 0x90, // swap AX,EAX,RAX with rm 16,32,64
+    OP_XCHG_86 = 0x86, // swap rm8 and reg8 
+    OP_XCHG_87 = 0x87, // swap rm16,32,64 and reg16,32,64 
+    
     // XOR -done
     OP_XOR_34 = 0x34, // 8 AL imm8 
     OP_XOR_35 = 0x35, // 16,32,64 ax,eax,rax imm16,32 
@@ -169,8 +188,8 @@ enum one_byte_opcodes{
 };
 
 enum two_byte_opcodes{
-    // TODO handle
-    OP_CMOV_44 = 0x44, // CMOVZ
+    // CMOV 
+    OP_CMOV_40 = 0x40, // CMOV covers 40-4f
 
     // Bit test (stores answer in CF flag)
     OP_BT_A3 = 0xa3, // normal reg -> rm
@@ -185,14 +204,18 @@ enum two_byte_opcodes{
     OP_IMUL_AF = 0xaf, // normal rm -> reg
 
     // TODO handle vex
-    OP_MOVDQU_6F = 0x6f, // xmm -> xmm/mm 
-    OP_MOVDQU_7F = 0x7f, // xmm/mm -> xmm 
+    OP_MOVDQU_6F = 0x6f, // xmm/m -> xmm 
+    OP_MOVDQU_7F = 0x7f, // xmm -> xmm/m 
 
     // MOVS/ZX -done
     OP_MOVSX_BE = 0xbe, // rm8 -> reg16,32,64 (sign extend)
     OP_MOVSX_BF = 0xbf, // rm16 -> reg32,64
     OP_MOVZX_B6 = 0xb6, // rm8 -> reg16,32,64 (zero extend)
     OP_MOVZX_B7 = 0xb7, // rm16 -> reg32,64
+
+    // MOVUPS // TODO handle vex
+    OP_MOVUPS_10 = 0x10, // xmm/m -> xmm
+    OP_MOVUPS_11 = 0x11, // xmm -> xmm/m
 
     // NOP - done 
     OP_NOP_1F = 0x1f, // NOP multi byte (rm32,64)
@@ -206,7 +229,15 @@ enum two_byte_opcodes{
     // PMOVMSK // TODO handle vex
     OP_PMOVMSK_D7 = 0xd7, // mm(64) -> reg(32 or 64) or xmm(128) -> reg(32 or 64) // 64 bit operand size is default in 64 bit mode
 
-    // Done
+    // PSLLDQ - shift double quadword left logical // TODO handle vex
+    OP_PSLLDQ_73 = 0x73, // imm8 ->xmm
+
+    // PSUB subtract packed integers // TODO handle vex
+    OP_PSUBB_F8 = 0xF8,
+    OP_PSUBW_F9 = 0xF9,
+    OP_PSUBD_FA = 0xFA,
+
+    //Done
     OP_POP_A1 = 0xa1, // pop FS register
     OP_POP_A9 = 0xa9, // pop GS register
     OP_PUSH_A0 = 0xa0, // push FS register
@@ -222,6 +253,13 @@ enum two_byte_opcodes{
 
     OP_SYSCALL_05 = 0x05, // Fast syscall, modifies a lot of registers but not stack pointer
     OP_XGETBV_01 = 0x01, // get value of control register EDX:EAX <- XCR[ECX]
+};
+
+enum three_byte_opcodes{
+    // Move data after swapping bytes
+    OP_MOVBE_F0 = 0xf0, // rm (m only) -> reg
+    OP_MOVBE_F1 = 0xf1, // reg -> rm (m only) 
+
 };
 
 void check_opcode(unsigned char * inst, int operand_override, int address_override, int rex);
