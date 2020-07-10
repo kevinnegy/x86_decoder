@@ -17,14 +17,11 @@ void check_modrm_reg(unsigned char * inst, int operand_size, int address_size, i
     int reg_num = (modrm & REG) >> 3;
     char * reg;
 
-    if(rex != 0 && rex & REX_W){
-        assert(operand_size == 64);
-        // REX bits need to be in 4th position from right 
-        u_int8_t rex_r = (rex & REX_R) << 1; 
+    // REX bits need to be in 4th position from right 
+    u_int8_t rex_r = (rex & REX_R) << 1; 
 
-        // Get extension bit from rex prefix
-        reg_num = reg_num| rex_r;
-    } 
+    // Get extension bit from rex prefix
+    reg_num = reg_num| rex_r;
 
     reg = get_register(reg_num, operand_size, rex);
 }

@@ -28,7 +28,7 @@ enum one_byte_opcodes{
     
     // Call -done 
     OP_CALL_E8 = 0xe8, // disp 32-> 64 bit sign extend
-    OP_CALL_FF = 0xff, // rm64 or jump to different location
+    OP_CALL_FF = 0xff, // rm16,32,64 
 
     // CMP - done
     OP_CMP_3C = 0x3c, // 8 AL imm8
@@ -43,11 +43,25 @@ enum one_byte_opcodes{
 
     OP_CBW_98 = 0x98, // convert byte to word AL->AX, word to double AX->EAX, double to quad EAX->RAX 
 
+    OP_CONVERT_99 = 0x99, // convert word double (CWD), CDQ, CQO
+
+    // DEC -done
+    OP_DEC_FE = 0xfe, // rm8
+    OP_DEC_FF = 0xff, // rm16,32,64
+
+    // DIV
+    OP_DIV_F6 = 0xf6, // AX <- AL * rm8 
+    OP_DIV_F7 = 0xf7, // rm 16,32,64 (same form as F6)
+
     // IMUL -signed multiply
     OP_IMUL_F6 = 0xf6, // AX <- AL * rm8 
     OP_IMUL_F7 = 0xf7, // rm 16,32,64 (same form as F6)
     OP_IMUL_6B = 0x6b, // imm8 * rm16,32,64 -> reg 16,32,64 
     OP_IMUL_69 = 0x69, // imm16,32 * rm16,32,64 -> reg 16,32,64 
+
+    // INC -done
+    OP_INC_FE = 0xfe, // rm8
+    OP_INC_FF = 0xff, // rm16,32,64
 
     // JCC -done (see opcode.c for which flags are in the condition)
     // TODO handle instructions that default to 64 bit operands in long mode like jcc
@@ -175,6 +189,10 @@ enum one_byte_opcodes{
     OP_SUB_2A = 0x2a, // 8bit regs/mm - rm->reg  
     OP_SUB_2B = 0x2b, // normal rm->reg 
 
+    // STOS - store string
+    OP_STOS_AA = 0xaa, // store AL in [RDI/EDI]
+    OP_STOS_AB = 0xab, // store AX,EAX,RAX in [RDI/EDI]
+
     // Test - done, no memory writing, just ANDs operands and sets SF PF ZF flags
     OP_TEST_A8 = 0xa8, // 8 AL imm8 
     OP_TEST_A9 = 0xa9, // 16,32,64 ax,eax,rax imm16,32 
@@ -212,11 +230,15 @@ enum two_byte_opcodes{
     OP_BSF_BC = 0xbc, // normal rm -> reg
 
     // Done
+    OP_CMPXCHG_B0 = 0xb0, // cmp rm8 with AL, if equal, ZF set and r8 loaded into rm8
+    OP_CMPXCHG_B1 = 0xb1, // cmp rm16,32,64 with AX,EAX,RAX, if equal, ZF set and r8 loaded into rm8
     OP_CPUID_A2 = 0xa2, // Gets CPU info into registers based on what EAX stores
     OP_JCC_80 = 0x80, // 64 bit mode JCC instructions are 80-8F (see one byte JCC instructions)
     OP_IMUL_AF = 0xaf, // normal rm -> reg
 
     // TODO handle vex
+    OP_MOVAPS_28 = 0x28, // xmm/m128 -> xmm
+    OP_MOVAPS_29 = 0x29, // xmm -> xmm/m128 
     OP_MOVD_6E = 0x6e, // rm32,64 -> mm registers (Also MOVQ)
     OP_MOVD_7E = 0x7e, // mm registers -> rm32,64
     OP_MOVDQU_6F = 0x6f, // xmm/m -> xmm 
@@ -239,6 +261,7 @@ enum two_byte_opcodes{
     OP_PCMPEQ_74 = 0x74, // either compare all (1)bytes in 64/128 bit data or
     OP_PCMPEQ_75 = 0x75, // (2) words
     OP_PCMPEQ_76 = 0x76, // (3) doublewords 
+    OP_PMINUB_DA = 0xda, // mm (dest), mm2/m64(src) or xmm
     OP_PMOVMSK_D7 = 0xd7, // mm(64) -> reg(32 or 64) or xmm(128) -> reg(32 or 64) // 64 bit operand size is default in 64 bit mode
     OP_POR_EB = 0xeb, // mm/m64 -> mm or xmm/m128 -> xmm 
     OP_PSHUFD_70 = 0x70,
@@ -261,12 +284,16 @@ enum two_byte_opcodes{
     OP_SETCC_90 = 0x90, // SETCC covers 90-9F
     OP_SYSCALL_05 = 0x05, // Fast syscall, modifies a lot of registers but not stack pointer
     OP_XGETBV_01 = 0x01, // get value of control register EDX:EAX <- XCR[ECX]
+    OP_XSAVEC_C7 = 0xc7, // save state components to rm
+    OP_XRSTOR_AE = 0xae, // restore state components from rm
 };
 
 enum three_byte_opcodes{
     // Move data after swapping bytes
     OP_MOVBE_F0 = 0xf0, // rm (m only) -> reg
     OP_MOVBE_F1 = 0xf1, // reg -> rm (m only) 
+
+    OP_PMINUB_3A = 0x3a, // xmm (dest), xmm/m128(src)
 
 };
 
