@@ -117,10 +117,6 @@ void check_modrm_rm(unsigned char * inst, int operand_size, int address_size, in
     u_int8_t mod = (modrm & MODRM) >> 6;
     u_int8_t modrm_rm = (modrm & RM);
 
-    if(rex & REX_W){
-        assert(operand_size == 64);
-    }
-
     // Get extension bit from rex prefix (even if REX.W not set, registers can still be extended in 64 bit mode
     u_int8_t rex_b = (rex & REX_B) << 3;
     modrm_rm = modrm_rm | rex_b;

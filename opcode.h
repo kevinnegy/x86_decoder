@@ -53,6 +53,10 @@ enum one_byte_opcodes{
     OP_DIV_F6 = 0xf6, // AX <- AL * rm8 
     OP_DIV_F7 = 0xf7, // rm 16,32,64 (same form as F6)
 
+    // IDIV -signed multiply
+    OP_IDIV_F6 = 0xf6, // AX <- AL * rm8 
+    OP_IDIV_F7 = 0xf7, // rm 16,32,64 (same form as F6)
+
     // IMUL -signed multiply
     OP_IMUL_F6 = 0xf6, // AX <- AL * rm8 
     OP_IMUL_F7 = 0xf7, // rm 16,32,64 (same form as F6)
@@ -75,6 +79,9 @@ enum one_byte_opcodes{
 
     // Lea done
     OP_LEA = 0x8d, // load effective address
+
+    // Leave done
+    OP_LEAVE_C9 = 0xc9, // stack pointer = base pointer, then pop base pointer 
 
     // Mov -done
     OP_MOV_88 = 0x88, // 8 bit regs/mm - reg->rm
@@ -237,10 +244,12 @@ enum two_byte_opcodes{
     OP_IMUL_AF = 0xaf, // normal rm -> reg
 
     // TODO handle vex
+    // TODO handle prefixes (override prefixes)
     OP_MOVAPS_28 = 0x28, // xmm/m128 -> xmm
     OP_MOVAPS_29 = 0x29, // xmm -> xmm/m128 
     OP_MOVD_6E = 0x6e, // rm32,64 -> mm registers (Also MOVQ)
     OP_MOVD_7E = 0x7e, // mm registers -> rm32,64
+    OP_MOVQ_D6 = 0xd6, //xmm -> xmm/m 
     OP_MOVDQU_6F = 0x6f, // xmm/m -> xmm 
     OP_MOVDQU_7F = 0x7f, // xmm -> xmm/m 
     OP_MOVHPD_16 = 0x16, // m64 -> xmm 
@@ -258,13 +267,26 @@ enum two_byte_opcodes{
     OP_NOP_1F = 0x1f, // NOP multi byte (rm32,64)
 
     // TODO handle vex
-    OP_PCMPEQ_74 = 0x74, // either compare all (1)bytes in 64/128 bit data or
+    OP_PADD_FC = 0xfc, // mm/m64 -> mm or xmm/m128 -> xmm
+    OP_PADD_FD = 0xfd, // mm/m64 -> mm or xmm/m128 -> xmm
+    OP_PADD_FE = 0xfe, // mm/m64 -> mm or xmm/m128 -> xmm
+    OP_PADD_D4 = 0xd4, // mm/m64 -> mm or xmm/m128 -> xmm
+    OP_PCMPGT_64 = 0x64, // either compare all (1)bytes in 64/128 bit data or
+    OP_PCMPGT_65 = 0x65, 
+    OP_PCMPGT_66 = 0x66, 
+    OP_PCMPEQ_74 = 0x74,
     OP_PCMPEQ_75 = 0x75, // (2) words
     OP_PCMPEQ_76 = 0x76, // (3) doublewords 
     OP_PMINUB_DA = 0xda, // mm (dest), mm2/m64(src) or xmm
     OP_PMOVMSK_D7 = 0xd7, // mm(64) -> reg(32 or 64) or xmm(128) -> reg(32 or 64) // 64 bit operand size is default in 64 bit mode
     OP_POR_EB = 0xeb, // mm/m64 -> mm or xmm/m128 -> xmm 
     OP_PSHUFD_70 = 0x70,
+    OP_PSLL_F1 = 0xf1, // mm/m64 -> mm or xmm/m128 -> xmm
+    OP_PSLL_F2 = 0xf2,
+    OP_PSLL_F3 = 0xf3,
+    OP_PSLL_71 = 0x71, // shift mm by imm8  
+    OP_PSLL_72 = 0x72, // shift mm by imm8  
+    OP_PSLL_73 = 0x73, // shift mm by imm8  
     OP_PSLLDQ_73 = 0x73, // imm8 ->xmm
     OP_PSUBB_F8 = 0xF8,
     OP_PSUBW_F9 = 0xF9,
@@ -273,6 +295,10 @@ enum two_byte_opcodes{
     OP_PUNPCK_61 = 0x61, // mm -> mm/m32 or xmm-> xmm2/m128
     OP_PUNPCK_62 = 0x62, // mm/m32 -> mm or xmm2/m128 -> xmm
     OP_PUNPCK_6C = 0x6C, // xmm2/m128 -> xmm
+    OP_PUNPCKH_68 = 0x68, // mm/m32 -> mm or xmm2/m128 -> xmm
+    OP_PUNPCKH_69 = 0x69, // mm/m32 -> mm or xmm2/m128 -> xmm
+    OP_PUNPCKH_6A = 0x6a, // mm/m32 -> mm or xmm2/m128 -> xmm
+    OP_PUNPCKH_6D = 0x6d, // xmm2/m128 -> xmm
     OP_PXOR_EF = 0xef, // logical xor
 
     //Done
@@ -293,6 +319,7 @@ enum three_byte_opcodes{
     OP_MOVBE_F0 = 0xf0, // rm (m only) -> reg
     OP_MOVBE_F1 = 0xf1, // reg -> rm (m only) 
 
+    OP_PALIGNR_0F = 0x0f, 
     OP_PMINUB_3A = 0x3a, // xmm (dest), xmm/m128(src)
 
 };

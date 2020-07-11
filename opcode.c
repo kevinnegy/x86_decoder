@@ -45,6 +45,18 @@ void check_third_opcode(unsigned char * inst, int operand_override, int address_
             check_modrm_rm(&inst[1], operand_size, address_size, rex);
             return; 
 
+        case OP_PALIGNR_0F:
+            if(operand_override == 1){ // 66 prefix
+                check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
+                check_modrm_rm(&inst[1], 4, address_size, rex);
+            }
+            else{
+                check_modrm_reg(&inst[1], 3, address_size, rex); // operand_size should be 3 for the mm regs
+                check_modrm_rm(&inst[1], 3, address_size, rex);
+            }
+            get_immediate(&inst[2], 8);
+            return;
+
         case OP_PMINUB_3A:
             assert(operand_override == 1);
             check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
@@ -83,7 +95,28 @@ void check_second_opcode(unsigned char * inst, int operand_override, int address
             //TODO handle FS/GS regster
             printf("memory access [rsp]\n"); 
             return;
-
+        
+        case OP_PADD_FC:
+        case OP_PADD_FD:
+        case OP_PADD_FE:
+        case OP_PADD_D4:
+        case OP_PCMPGT_64:
+        case OP_PCMPGT_65:
+        case OP_PCMPGT_66:
+        case OP_PCMPEQ_74:
+        case OP_PCMPEQ_75:
+        case OP_PCMPEQ_76:
+        case OP_PMINUB_DA:
+        case OP_POR_EB:
+        case OP_PSLL_F1:
+        case OP_PSLL_F2:
+        case OP_PSLL_F3:
+        case OP_PSUBB_F8:
+        case OP_PSUBW_F9:
+        case OP_PSUBD_FA:
+        case OP_PUNPCKH_68:
+        case OP_PUNPCKH_69:
+        case OP_PUNPCKH_6A:
         case OP_PXOR_EF:
             if(operand_override == 1){ // 66 prefix
                 check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
@@ -93,6 +126,12 @@ void check_second_opcode(unsigned char * inst, int operand_override, int address
                 check_modrm_reg(&inst[1], 3, address_size, rex); // operand_size should be 3 for the mm regs
                 check_modrm_rm(&inst[1], 3, address_size, rex);
             }
+            return;
+
+        case OP_PUNPCKH_6D:
+            assert(operand_override == 1);
+            check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
+            check_modrm_rm(&inst[1], 4, address_size, rex);
             return;
 
         case OP_CMPXCHG_B0:
@@ -129,6 +168,7 @@ void check_second_opcode(unsigned char * inst, int operand_override, int address
             return;
 
         case OP_MOVAPS_29:
+        case OP_MOVQ_D6:
         case OP_MOVDQU_7F:
         case OP_MOVUPS_11:
             check_modrm_rm(&inst[1], 4, address_size, rex);
@@ -141,25 +181,6 @@ void check_second_opcode(unsigned char * inst, int operand_override, int address
             check_modrm_rm(&inst[1], 64, address_size, rex);
             return;
             
-
-        case OP_PCMPEQ_74:
-        case OP_PCMPEQ_75:
-        case OP_PCMPEQ_76:
-        case OP_PMINUB_DA:
-        case OP_POR_EB:
-        case OP_PSUBB_F8:
-        case OP_PSUBW_F9:
-        case OP_PSUBD_FA:
-            if(operand_override == 1){ // 66 prefix
-                check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
-                check_modrm_rm(&inst[1], 4, address_size, rex);
-            }
-            else{
-                check_modrm_reg(&inst[1], 3, address_size, rex); // operand_size should be 3 for the mm regs
-                check_modrm_rm(&inst[1], 3, address_size, rex);
-            }
-            return;
-
         case OP_PMOVMSK_D7:
             check_modrm_reg(&inst[1], 64, address_size, rex); // operand_size should be 4 for the xmm regs
             if(operand_override == 1){ // 66 prefix
@@ -205,8 +226,49 @@ void check_second_opcode(unsigned char * inst, int operand_override, int address
             check_modrm_rm(&inst[1], 4, address_size, rex);
             return;
 
+        case 0x71:
+            switch((inst[1] & 0x38) >> 3){
+                case 6: // PSLL
+                    if(operand_override == 1){ // 66 prefix
+                        check_modrm_rm(&inst[1], 4, address_size, rex);
+                        check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
+                    }
+                    else{
+                        check_modrm_rm(&inst[1], 3, address_size, rex);
+                        check_modrm_reg(&inst[1], 3, address_size, rex); // operand_size should be 3 for the mm regs
+                    }
+                    return;
+                default:
+                    assert(0);
+            }
+            return;
+
+        case 0x72:
+            switch((inst[1] & 0x38) >> 3){
+                case 6: // PSLL
+                    if(operand_override == 1){ // 66 prefix
+                        check_modrm_rm(&inst[1], 4, address_size, rex);
+                        check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
+                    }
+                    else{
+                        check_modrm_rm(&inst[1], 3, address_size, rex);
+                        check_modrm_reg(&inst[1], 3, address_size, rex); // operand_size should be 3 for the mm regs
+                    }
+                    return;
+                default:
+                    assert(0);
+            }
+            return;
+
         case 0x73:
             switch((inst[1] & 0x38) >> 3){
+                case 6: //PSLL
+                    if(operand_override == 1)
+                        check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
+                    else
+                        check_modrm_reg(&inst[1], 3, address_size, rex); // operand_size should be 3 for the mm regs
+                    get_immediate(&inst[2], 8);
+
                 case 7: // PSLLDQ
                     check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
                     get_immediate(&inst[2], 8);
@@ -471,6 +533,14 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
             printf("disp 0x%lx\n", get_displacement(&inst[1], 64, 5)); // 32 bit disp but sign extended
             return;
 
+        case OP_LEAVE_C9:
+            if(operand_override == 1)
+                printf("pop [bp]");
+            else
+                printf("pop [rbp]");
+            return;
+
+
         // rm8 (dest), imm8
         case OP_MOV_C6:
             check_modrm_rm(&inst[1], 8, address_size, rex);
@@ -667,6 +737,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
                 case 4: // MUL rm
                 case 5: // IMUL rm
                 case 6: // DIV rm
+                case 7: // IDIV rm
                     check_modrm_rm(&inst[1], 8, address_size, rex);
                     return;
                 default:
@@ -689,6 +760,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
                 case 4: // MUL
                 case 5: // IMUL
                 case 6: // DIV rm
+                case 7: // IDIV rm
                     check_modrm_rm(&inst[1], operand_size, address_size, rex);
                     return;
                 default:
@@ -733,7 +805,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
                     printf("memory access [rsp]\n"); 
                     return;
                 default:
-                    assert(0);
+                    return;
             }
             return;
 

@@ -11,13 +11,10 @@ void check_sib(unsigned char * inst, int operand_size, int rex){
     int index = (sib & SIB_INDEX) >> 3;
     int base = (sib & SIB_BASE);
 
-    if(rex != 0 && rex & REX_W){
-        assert(operand_size == 64);
-        u_int8_t rex_x = (rex & REX_X) << 2; 
-        u_int8_t rex_b = (rex & REX_B) << 3;
-        base = rex_b | base;
-        index = rex_x | index;
-    }
+    u_int8_t rex_x = (rex & REX_X) << 2; 
+    u_int8_t rex_b = (rex & REX_B) << 3;
+    base = rex_b | base;
+    index = rex_x | index;
 
     operand_size = 64; 
 
