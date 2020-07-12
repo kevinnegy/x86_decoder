@@ -57,11 +57,20 @@ void check_third_opcode(unsigned char * inst, int operand_override, int address_
             get_immediate(&inst[2], 8);
             return;
 
+        case OP_PMAXUB_3E:
         case OP_PMINUB_3A:
             assert(operand_override == 1);
             check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
             check_modrm_rm(&inst[1], 4, address_size, rex);
             return;
+
+        case OP_PCMPISTRI_63:
+            assert(operand_override == 1);
+            check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
+            check_modrm_rm(&inst[1], 4, address_size, rex);
+            get_immediate(&inst[2], 8);
+            return;
+            
     }
 
     assert(0); 
@@ -106,6 +115,7 @@ void check_second_opcode(unsigned char * inst, int operand_override, int address
         case OP_PCMPEQ_74:
         case OP_PCMPEQ_75:
         case OP_PCMPEQ_76:
+        case OP_PMAXUB_DE:
         case OP_PMINUB_DA:
         case OP_POR_EB:
         case OP_PSLL_F1:
@@ -135,11 +145,13 @@ void check_second_opcode(unsigned char * inst, int operand_override, int address
             return;
 
         case OP_CMPXCHG_B0:
+        case OP_XADD_C0:
             check_modrm_rm(&inst[1], 8, address_size, rex);
             check_modrm_reg(&inst[1], 8, address_size, rex);
             return;
             
         case OP_CMPXCHG_B1:
+        case OP_XADD_C1:
             check_modrm_rm(&inst[1], operand_size, address_size, rex);
             check_modrm_reg(&inst[1], operand_size, address_size, rex);
             return;
@@ -423,6 +435,8 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
     switch(opcode){
         case OP_NOP_90:
         case OP_CONVERT_99:
+        case OP_CMPS_A6:
+        case OP_CMPS_A7:
             return;
 
         case OP_MOV_A0: case OP_MOV_A1: case OP_MOV_A2: case OP_MOV_A3:

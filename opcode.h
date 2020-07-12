@@ -41,6 +41,9 @@ enum one_byte_opcodes{
     OP_CMP_3A = 0x3a, // 8 modrm - rm->reg
     OP_CMP_3B = 0x3b, // 16,32,64 modrm - rm->reg
 
+    OP_CMPS_A6 = 0xa6, // compare RSI/ESI to RDI/EDI and set flags
+    OP_CMPS_A7 = 0xa7, // compare RSI/ESI to RDI/EDI and set flags
+
     OP_CBW_98 = 0x98, // convert byte to word AL->AX, word to double AX->EAX, double to quad EAX->RAX 
 
     OP_CONVERT_99 = 0x99, // convert word double (CWD), CDQ, CQO
@@ -277,6 +280,7 @@ enum two_byte_opcodes{
     OP_PCMPEQ_74 = 0x74,
     OP_PCMPEQ_75 = 0x75, // (2) words
     OP_PCMPEQ_76 = 0x76, // (3) doublewords 
+    OP_PMAXUB_DE = 0xde, // mm/m64 -> mm or xmm/m128 -> xmm
     OP_PMINUB_DA = 0xda, // mm (dest), mm2/m64(src) or xmm
     OP_PMOVMSK_D7 = 0xd7, // mm(64) -> reg(32 or 64) or xmm(128) -> reg(32 or 64) // 64 bit operand size is default in 64 bit mode
     OP_POR_EB = 0xeb, // mm/m64 -> mm or xmm/m128 -> xmm 
@@ -309,6 +313,8 @@ enum two_byte_opcodes{
     OP_RDTSC = 0x31, // read time stamp counter
     OP_SETCC_90 = 0x90, // SETCC covers 90-9F
     OP_SYSCALL_05 = 0x05, // Fast syscall, modifies a lot of registers but not stack pointer
+    OP_XADD_C0 = 0xc0, // swaps operands(rm8, r8) and then puts sum in rm8
+    OP_XADD_C1 = 0xc1, // swaps operands(rm16,32,64, r16,32,64) and then puts sum in rm
     OP_XGETBV_01 = 0x01, // get value of control register EDX:EAX <- XCR[ECX]
     OP_XSAVEC_C7 = 0xc7, // save state components to rm
     OP_XRSTOR_AE = 0xae, // restore state components from rm
@@ -320,6 +326,8 @@ enum three_byte_opcodes{
     OP_MOVBE_F1 = 0xf1, // reg -> rm (m only) 
 
     OP_PALIGNR_0F = 0x0f, 
+    OP_PCMPISTRI_63 = 0x63, // xmm, xmm/m128, imm8
+    OP_PMAXUB_3E = 0x3e, // mm/m64 -> mm or xmm/m128 -> xmm
     OP_PMINUB_3A = 0x3a, // xmm (dest), xmm/m128(src)
 
 };
