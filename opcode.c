@@ -419,6 +419,12 @@ void check_second_opcode(unsigned char * inst, int operand_override, int address
     return;
 }
 
+void check_vex_opcode(unsigned char * inst){
+    printf("WE HAVE A VEX");
+    assert(0);
+    return;
+}
+
 // TODO handle 16 bit cases
 void check_opcode(unsigned char * inst, int operand_override, int address_override, int rex){
     assert(inst != NULL);
@@ -426,6 +432,10 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
 
     if(opcode == 0xf){
         check_second_opcode(&inst[1], operand_override, address_override, rex);
+        return;
+    }
+    else if (opcode == 0xc4 || opcode == 0xc5){
+        check_vex_opcode(&inst[1]); // TODO make sure no 66, F2, F3, REX, or LOCK prefix is used
         return;
     }
 
