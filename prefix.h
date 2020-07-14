@@ -1,11 +1,31 @@
 #ifndef PREFIX_H
 #define PREFIX_H
 
-/** Prefixes **/
-void check_prefix(unsigned char * inst, int operand_override, int address_override);
-void check_rex(unsigned char * inst, int operand_override, int address_override);
+#include <stdlib.h>
 
-enum prefixes{
+struct prefixes{
+    u_int8_t LOCK: 1;
+    u_int8_t REPN: 1;
+    u_int8_t REP: 1;
+    u_int8_t CS: 1;
+    u_int8_t SS: 1;
+    u_int8_t DS: 1;
+    u_int8_t ES: 1;
+    u_int8_t FS: 1;
+    u_int8_t GS: 1;
+    u_int8_t OPERAND_OVERRIDE: 1;
+    u_int8_t ADDRESS_OVERRIDE: 1;
+    u_int8_t REX;
+    u_int8_t VEX_C5;
+    u_int16_t VEX_C4;
+};
+
+/** Prefixes **/
+void check_prefix(unsigned char * inst, struct prefixes * prfx);
+void check_rex(unsigned char * inst, struct prefixes * prfx);
+void check_vex_C4(unsigned char * inst);
+
+enum prefix{
     PREFIX_LOCK = 0xf0,
     PREFIX_REPN = 0xf2, // TODO REPN and REP repeat same instruction for each element in string
     PREFIX_REP = 0xf3,
@@ -25,8 +45,10 @@ enum prefixes{
 
     PREFIX_OP_SIZE_OVERRIDE = 0x66,
     PREFIX_ADDR_SIZE_OVERRIDE = 0x67,
-};
 
+    PREFIX_VEX_C4 = 0xc4,
+    PREFIX_VEX_C5 = 0xc5,
+};
 //REX-prefix is for 64 bit mode instructions. Only used if instruction operates on 64bit registers. "If rex used when no meaning, it is ignored" (is that a problem?)
 // one rex prefix perinstruction, must go right before opcode or escapeopcode byte(0FH) (after any mandatory prefixes)
 // one byte REX prefix: 0100WRXB:
@@ -35,6 +57,23 @@ enum prefixes{
 #define REX_R       (1 << 2)    // extension of ModR/M reg field
 #define REX_X       (1 << 1)    // extension of SIB index field
 #define REX_B       (1 << 0)    // extension of ModR/M r/m field, SIB base field, or Opcode reg field ( how is this determined?, seems like based on if r or x are set.)
+
+#define VEX_C4_R (0x1 << 7)
+#define VEX_C4_vvvv (0xf << 3) // if 0xf, ignore, otherwise it is a register specifier
+#define VEX_C4_L (0x1 << 2) // 0 = scalar or 128 bit, 1 = 256 bit
+#define VEX_C4_pp 0x3       // acts like prefix, 00 = none, 01 = 66, 10 = F3, 11 = F2
+
+#define VEX_C5_R (0x1 << 7)
+#define VEX_C5_X (0x1 << 6)
+#define VEX_C5_B (0x1 << 5)
+#define VEX_C5_mmmm 0x1f    // 0 ignore, 1 implied 0F before opcode, 2 implied 0f 38, 3 0f 34
+
+#define VEX_C5_W (0x1 << 7)
+#define VEX_C5_vvvv (0xf << 3)
+#define VEX_C5_L (0x1 << 2)
+#define VEX_C5_pp 0x3
+
+
 
 // Group 1:
     // FO - LOCK prefix - exclusive use of shared memory in multiprocessor environ
@@ -62,4 +101,7 @@ enum prefixes{
 
 // Group 4:
     // 67 - address size override prefix (switch between 16 and 32 bit addressing)
+    
 #endif
+
+
