@@ -1,6 +1,8 @@
 #ifndef REGISTERS_H
 #define REGISTERS_H
 
+#include "prefix.h"
+
 // Registers are stored in 3 bits
 
 // word registers w = 1 (or default, no w bit needed)
@@ -146,7 +148,7 @@ enum xmm_regs{
     XMM15, 
 };
 
-char * get_register(int index, int mode, int rex);
+char * get_register(int index, int mode, struct prefixes * prfx);
 
 #endif 
 

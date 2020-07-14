@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "registers.h"
+#include "prefix.h"
 
 static char * get_register_16(int index){
     char * strings[] = {"ax", "cx", "dx", "bx", "sp", "bp", "si", "di", "r8w", "r9w", "r10w", "r11w", "r12w", "r13w", "r14w", "r15w"};
@@ -48,11 +49,11 @@ static char * get_xmm_register(int index){
     return strings[index];
 }
 
-char * get_register(int index, int mode, int rex){
+char * get_register(int index, int mode, struct prefixes * prfx){
     if(index < 0 || index > 15)
         assert(0);
 
-    if(mode == 8 && rex == 0){
+    if(mode == 8 && prfx->REX == 0){
         if(index > 7) assert(0);
         return get_register_8(index);
     }

@@ -1,6 +1,8 @@
 #ifndef MODRM_H
 #define MODRM_H
 
+#include "prefix.h"
+
 #define MODRM 0xc0
 #define REG   0x38
 #define RM    0x07
@@ -9,8 +11,8 @@
     // if rex byte exists and w = 1, operand is 64 bit
     // if operand_size_override is on, (no rex byte should be used) switch to 16 bit operand
     // if address_size_override is on, (no rex byte should be used) switch to 16 bit addressing 
-void check_modrm_rm(unsigned char * inst, int operand_size, int address_size, int rex);
-void check_modrm_reg(unsigned char * inst, int operand_size, int address_size, int rex);
+void check_modrm_rm(unsigned char * inst, int operand_size, int address_size, struct prefixes * prfx);
+void check_modrm_reg(unsigned char * inst, int operand_size, int address_size, struct prefixes * prfx);
 
 /** ModR/M **/
 // ModR/M byte - addressing mode byte:

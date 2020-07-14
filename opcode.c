@@ -38,24 +38,24 @@ void check_third_opcode(unsigned char * inst, struct prefixes * prfx){
     switch(opcode){
         case OP_MOVBE_F0:
             assert((inst[1] & 0xc0) != 0xc0); // Rm must be a memory location
-            check_modrm_rm(&inst[1], operand_size, address_size, rex);
-            check_modrm_reg(&inst[1], operand_size, address_size, rex);
+            check_modrm_rm(&inst[1], operand_size, address_size, prfx);
+            check_modrm_reg(&inst[1], operand_size, address_size, prfx);
             return;
 
         case OP_MOVBE_F1:
             assert((inst[1] & 0xc0) != 0xc0); // Rm must be a memory location
-            check_modrm_reg(&inst[1], operand_size, address_size, rex);
-            check_modrm_rm(&inst[1], operand_size, address_size, rex);
+            check_modrm_reg(&inst[1], operand_size, address_size, prfx);
+            check_modrm_rm(&inst[1], operand_size, address_size, prfx);
             return; 
 
         case OP_PALIGNR_0F:
             if(operand_override == 1){ // 66 prefix
-                check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
-                check_modrm_rm(&inst[1], 4, address_size, rex);
+                check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
+                check_modrm_rm(&inst[1], 4, address_size, prfx);
             }
             else{
-                check_modrm_reg(&inst[1], 3, address_size, rex); // operand_size should be 3 for the mm regs
-                check_modrm_rm(&inst[1], 3, address_size, rex);
+                check_modrm_reg(&inst[1], 3, address_size, prfx); // operand_size should be 3 for the mm regs
+                check_modrm_rm(&inst[1], 3, address_size, prfx);
             }
             get_immediate(&inst[2], 8);
             return;
@@ -63,14 +63,14 @@ void check_third_opcode(unsigned char * inst, struct prefixes * prfx){
         case OP_PMAXUB_3E:
         case OP_PMINUB_3A:
             assert(operand_override == 1);
-            check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
-            check_modrm_rm(&inst[1], 4, address_size, rex);
+            check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
+            check_modrm_rm(&inst[1], 4, address_size, prfx);
             return;
 
         case OP_PCMPISTRI_63:
             assert(operand_override == 1);
-            check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
-            check_modrm_rm(&inst[1], 4, address_size, rex);
+            check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
+            check_modrm_rm(&inst[1], 4, address_size, prfx);
             get_immediate(&inst[2], 8);
             return;
             
@@ -135,125 +135,125 @@ void check_second_opcode(unsigned char * inst, struct prefixes * prfx){
         case OP_PUNPCKH_6A:
         case OP_PXOR_EF:
             if(operand_override == 1){ // 66 prefix
-                check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
-                check_modrm_rm(&inst[1], 4, address_size, rex);
+                check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
+                check_modrm_rm(&inst[1], 4, address_size, prfx);
             }
             else{
-                check_modrm_reg(&inst[1], 3, address_size, rex); // operand_size should be 3 for the mm regs
-                check_modrm_rm(&inst[1], 3, address_size, rex);
+                check_modrm_reg(&inst[1], 3, address_size, prfx); // operand_size should be 3 for the mm regs
+                check_modrm_rm(&inst[1], 3, address_size, prfx);
             }
             return;
 
         case OP_PUNPCKH_6D:
             assert(operand_override == 1);
-            check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
-            check_modrm_rm(&inst[1], 4, address_size, rex);
+            check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
+            check_modrm_rm(&inst[1], 4, address_size, prfx);
             return;
 
         case OP_CMPXCHG_B0:
         case OP_XADD_C0:
-            check_modrm_rm(&inst[1], 8, address_size, rex);
-            check_modrm_reg(&inst[1], 8, address_size, rex);
+            check_modrm_rm(&inst[1], 8, address_size, prfx);
+            check_modrm_reg(&inst[1], 8, address_size, prfx);
             return;
             
         case OP_CMPXCHG_B1:
         case OP_XADD_C1:
-            check_modrm_rm(&inst[1], operand_size, address_size, rex);
-            check_modrm_reg(&inst[1], operand_size, address_size, rex);
+            check_modrm_rm(&inst[1], operand_size, address_size, prfx);
+            check_modrm_reg(&inst[1], operand_size, address_size, prfx);
             return;
     
         case OP_MOVD_6E:
             if(operand_override == 1) // 66H
-                check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
+                check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
             else
-                check_modrm_reg(&inst[1], 3, address_size, rex); // operand_size should be 3 for the mm regs
-            check_modrm_rm(&inst[1], operand_size, address_size, rex);
+                check_modrm_reg(&inst[1], 3, address_size, prfx); // operand_size should be 3 for the mm regs
+            check_modrm_rm(&inst[1], operand_size, address_size, prfx);
             return;
 
         case OP_MOVD_7E:
-            check_modrm_rm(&inst[1], operand_size, address_size, rex);
+            check_modrm_rm(&inst[1], operand_size, address_size, prfx);
             if(operand_override == 1) // 66H
-                check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
+                check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
             else
-                check_modrm_reg(&inst[1], 3, address_size, rex); // operand_size should be 3 for the mm regs
+                check_modrm_reg(&inst[1], 3, address_size, prfx); // operand_size should be 3 for the mm regs
             return;
 
         case OP_MOVAPS_28:
         case OP_MOVDQU_6F:
         case OP_MOVUPS_10:
-            check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
-            check_modrm_rm(&inst[1], 4, address_size, rex);
+            check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
+            check_modrm_rm(&inst[1], 4, address_size, prfx);
             return;
 
         case OP_MOVAPS_29:
         case OP_MOVQ_D6:
         case OP_MOVDQU_7F:
         case OP_MOVUPS_11:
-            check_modrm_rm(&inst[1], 4, address_size, rex);
-            check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
+            check_modrm_rm(&inst[1], 4, address_size, prfx);
+            check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
             return;
 
         case OP_MOVHPD_16:
         case OP_MOVLPD_12:
-            check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
-            check_modrm_rm(&inst[1], 64, address_size, rex);
+            check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
+            check_modrm_rm(&inst[1], 64, address_size, prfx);
             return;
             
         case OP_PMOVMSK_D7:
-            check_modrm_reg(&inst[1], 64, address_size, rex); // operand_size should be 4 for the xmm regs
+            check_modrm_reg(&inst[1], 64, address_size, prfx); // operand_size should be 4 for the xmm regs
             if(operand_override == 1){ // 66 prefix
-                check_modrm_rm(&inst[1], 4, address_size, rex);
+                check_modrm_rm(&inst[1], 4, address_size, prfx);
             }
             else{
-                check_modrm_rm(&inst[1], 3, address_size, rex);
+                check_modrm_rm(&inst[1], 3, address_size, prfx);
             }
             return;
 
         case OP_PSHUFD_70: 
             assert(operand_override == 1);
-            check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
-            check_modrm_rm(&inst[1], 4, address_size, rex);
+            check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
+            check_modrm_rm(&inst[1], 4, address_size, prfx);
             get_immediate(&inst[2], 8);
             return;
         
         case OP_PUNPCK_60:
         case OP_PUNPCK_62:
             if(operand_override == 1){ // 66 prefix
-                check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
-                check_modrm_rm(&inst[1], 4, address_size, rex);
+                check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
+                check_modrm_rm(&inst[1], 4, address_size, prfx);
             }
             else{
-                check_modrm_reg(&inst[1], 3, address_size, rex); // operand_size should be 3 for the mm regs
-                check_modrm_rm(&inst[1], 3, address_size, rex);
+                check_modrm_reg(&inst[1], 3, address_size, prfx); // operand_size should be 3 for the mm regs
+                check_modrm_rm(&inst[1], 3, address_size, prfx);
             }
             return;
 
         case OP_PUNPCK_61:
             if(operand_override == 1){ // 66 prefix
-                check_modrm_rm(&inst[1], 4, address_size, rex);
-                check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
+                check_modrm_rm(&inst[1], 4, address_size, prfx);
+                check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
             }
             else{
-                check_modrm_rm(&inst[1], 3, address_size, rex);
-                check_modrm_reg(&inst[1], 3, address_size, rex); // operand_size should be 3 for the mm regs
+                check_modrm_rm(&inst[1], 3, address_size, prfx);
+                check_modrm_reg(&inst[1], 3, address_size, prfx); // operand_size should be 3 for the mm regs
             }
             return;
             
         case OP_PUNPCK_6C:
-            check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
-            check_modrm_rm(&inst[1], 4, address_size, rex);
+            check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
+            check_modrm_rm(&inst[1], 4, address_size, prfx);
             return;
 
         case 0x71:
             switch((inst[1] & 0x38) >> 3){
                 case 6: // PSLL
                     if(operand_override == 1){ // 66 prefix
-                        check_modrm_rm(&inst[1], 4, address_size, rex);
-                        check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
+                        check_modrm_rm(&inst[1], 4, address_size, prfx);
+                        check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
                     }
                     else{
-                        check_modrm_rm(&inst[1], 3, address_size, rex);
-                        check_modrm_reg(&inst[1], 3, address_size, rex); // operand_size should be 3 for the mm regs
+                        check_modrm_rm(&inst[1], 3, address_size, prfx);
+                        check_modrm_reg(&inst[1], 3, address_size, prfx); // operand_size should be 3 for the mm regs
                     }
                     return;
                 default:
@@ -265,12 +265,12 @@ void check_second_opcode(unsigned char * inst, struct prefixes * prfx){
             switch((inst[1] & 0x38) >> 3){
                 case 6: // PSLL
                     if(operand_override == 1){ // 66 prefix
-                        check_modrm_rm(&inst[1], 4, address_size, rex);
-                        check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
+                        check_modrm_rm(&inst[1], 4, address_size, prfx);
+                        check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
                     }
                     else{
-                        check_modrm_rm(&inst[1], 3, address_size, rex);
-                        check_modrm_reg(&inst[1], 3, address_size, rex); // operand_size should be 3 for the mm regs
+                        check_modrm_rm(&inst[1], 3, address_size, prfx);
+                        check_modrm_reg(&inst[1], 3, address_size, prfx); // operand_size should be 3 for the mm regs
                     }
                     return;
                 default:
@@ -282,53 +282,53 @@ void check_second_opcode(unsigned char * inst, struct prefixes * prfx){
             switch((inst[1] & 0x38) >> 3){
                 case 6: //PSLL
                     if(operand_override == 1)
-                        check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
+                        check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
                     else
-                        check_modrm_reg(&inst[1], 3, address_size, rex); // operand_size should be 3 for the mm regs
+                        check_modrm_reg(&inst[1], 3, address_size, prfx); // operand_size should be 3 for the mm regs
                     get_immediate(&inst[2], 8);
 
                 case 7: // PSLLDQ
-                    check_modrm_reg(&inst[1], 4, address_size, rex); // operand_size should be 4 for the xmm regs
+                    check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
                     get_immediate(&inst[2], 8);
                     return;
             }
             return;
 
         case OP_BT_BA:
-            check_modrm_rm(&inst[1], operand_size, address_size, rex);
+            check_modrm_rm(&inst[1], operand_size, address_size, prfx);
             get_immediate(&inst[2], 8);
             return;
 
         case OP_BT_A3:
-            check_modrm_rm(&inst[1], operand_size, address_size, rex);
-            check_modrm_reg(&inst[1], operand_size, address_size, rex);
+            check_modrm_rm(&inst[1], operand_size, address_size, prfx);
+            check_modrm_reg(&inst[1], operand_size, address_size, prfx);
             return;
 
         // Normal rm->reg
         case OP_BSF_BC:
         case OP_IMUL_AF:
-            check_modrm_reg(&inst[1], operand_size, address_size, rex);
-            check_modrm_rm(&inst[1], operand_size, address_size, rex);
+            check_modrm_reg(&inst[1], operand_size, address_size, prfx);
+            check_modrm_rm(&inst[1], operand_size, address_size, prfx);
             return;
 
         case OP_MOVSX_BE:
         case OP_MOVZX_B6:
-            check_modrm_reg(&inst[1], operand_size, address_size, rex);
-            check_modrm_rm(&inst[1], 8, address_size, rex);
+            check_modrm_reg(&inst[1], operand_size, address_size, prfx);
+            check_modrm_rm(&inst[1], 8, address_size, prfx);
             return;
 
         case OP_MOVSX_BF:
         case OP_MOVZX_B7:
             assert(operand_size != 16);
-            check_modrm_reg(&inst[1], operand_size, address_size, rex);
-            check_modrm_rm(&inst[1], 16, address_size, rex);
+            check_modrm_reg(&inst[1], operand_size, address_size, prfx);
+            check_modrm_rm(&inst[1], 16, address_size, prfx);
             return;
 
         case 0xAE:
             switch((inst[1] & 0x38) >> 3){
                 case 5: // xrstor
                     assert(operand_size != 16);
-                    check_modrm_rm(&inst[1], operand_size, address_size, rex);
+                    check_modrm_rm(&inst[1], operand_size, address_size, prfx);
                     return;
                 default:
                     assert(0);
@@ -339,7 +339,7 @@ void check_second_opcode(unsigned char * inst, struct prefixes * prfx){
             switch((inst[1] & 0x38) >> 3){
                 case 4: // xsavec 
                     assert(operand_size != 16);
-                    check_modrm_rm(&inst[1], operand_size, address_size, rex);
+                    check_modrm_rm(&inst[1], operand_size, address_size, prfx);
                     return;
                 default:
                     assert(0);
@@ -369,8 +369,8 @@ void check_second_opcode(unsigned char * inst, struct prefixes * prfx){
             case 0xd: // CMOVGE/CMOVNL (SF = OF)
             case 0xf: // CMOVG/CMOVNLE (ZF = 0 and SF = OF)
             case 0xe: // CMOVGE/CMOVLE/CMOVNG (ZF = 1 or SF != OF)
-                check_modrm_reg(&inst[1], operand_size, address_size, rex);
-                check_modrm_rm(&inst[1], operand_size, address_size, rex);
+                check_modrm_reg(&inst[1], operand_size, address_size, prfx);
+                check_modrm_rm(&inst[1], operand_size, address_size, prfx);
                 return;
         }
     }
@@ -416,7 +416,7 @@ void check_second_opcode(unsigned char * inst, struct prefixes * prfx){
             case 0xd: // SETGE/SETNL (SF = OF)
             case 0xf: // SETG/SETNLE (ZF = 0 and SF = OF)
             case 0xe: // SETGE/SETLE/SETNG (ZF = 1 or SF != OF)
-                check_modrm_rm(&inst[1], 8, 8, rex);
+                check_modrm_rm(&inst[1], 8, 8, prfx);
                 return;
         }
     }
@@ -463,14 +463,14 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
 
         case OP_TEST_84:
             // Test does no memory writing, skip calls 
-            //check_modrm_rm(&inst[1], 8, address_size, rex);
-            //check_modrm_reg(&inst[1], 8, address_size, rex);
+            //check_modrm_rm(&inst[1], 8, address_size, prfx);
+            //check_modrm_reg(&inst[1], 8, address_size, prfx);
             return;
 
         case OP_TEST_85:
             // Test does no memory writing, skip calls 
-            //check_modrm_reg(&inst[1], 8, address_size, rex);
-            //check_modrm_rm(&inst[1], 8, address_size, rex);
+            //check_modrm_reg(&inst[1], 8, address_size, prfx);
+            //check_modrm_rm(&inst[1], 8, address_size, prfx);
             return;
 
         // 8 bit operand case - rm (dest), reg
@@ -482,8 +482,8 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
         case OP_SBB_18:
         case OP_SUB_28:
         case OP_XOR_30:
-            check_modrm_rm(&inst[1], 8, address_size, rex);
-            check_modrm_reg(&inst[1], 8, address_size, rex);
+            check_modrm_rm(&inst[1], 8, address_size, prfx);
+            check_modrm_reg(&inst[1], 8, address_size, prfx);
             return;
 
         // 8 bit operand case - reg (dest), rm
@@ -496,8 +496,8 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
         case OP_SUB_2A:
         case OP_XCHG_86: // Could go in either normal 8 bit
         case OP_XOR_32:
-            check_modrm_reg(&inst[1], 8, address_size, rex);
-            check_modrm_rm(&inst[1], 8, address_size, rex);
+            check_modrm_reg(&inst[1], 8, address_size, prfx);
+            check_modrm_rm(&inst[1], 8, address_size, prfx);
             return;
 
         // Normal - rm (dest), reg 
@@ -510,8 +510,8 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
         case OP_SUB_29:
         case OP_XCHG_87: // Could go in either normal reg/rm slot
         case OP_XOR_31:
-            check_modrm_rm(&inst[1], operand_size, address_size, rex);
-            check_modrm_reg(&inst[1], operand_size, address_size, rex);
+            check_modrm_rm(&inst[1], operand_size, address_size, prfx);
+            check_modrm_reg(&inst[1], operand_size, address_size, prfx);
             return;
 
         // Normal - reg (dest), rm 
@@ -525,8 +525,8 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
         case OP_SBB_1B:
         case OP_SUB_2B:
         case OP_XOR_33:
-            check_modrm_reg(&inst[1], operand_size, address_size, rex);
-            check_modrm_rm(&inst[1], operand_size, address_size, rex);
+            check_modrm_reg(&inst[1], operand_size, address_size, prfx);
+            check_modrm_rm(&inst[1], operand_size, address_size, prfx);
             return;
 
         // ax,eax,rax imm16,32
@@ -538,7 +538,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
         case OP_SUB_2D:
         case OP_TEST_A9:
         case OP_XOR_35:
-            get_register(0, operand_size, rex);
+            get_register(0, operand_size, prfx);
             if(operand_size == 64)
                 get_immediate(&inst[1], 32);
             else
@@ -554,7 +554,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
         case OP_SUB_2C:
         case OP_TEST_A8:
         case OP_XOR_34:
-            get_register(0, 8, 0); // AL
+            get_register(0, 8, prfx); // AL
             get_immediate(&inst[1], 8);
             return;
 
@@ -572,7 +572,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
 
         // rm8 (dest), imm8
         case OP_MOV_C6:
-            check_modrm_rm(&inst[1], 8, address_size, rex);
+            check_modrm_rm(&inst[1], 8, address_size, prfx);
             get_immediate(&inst[2], 8);
             return;
 
@@ -586,7 +586,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
                 case 5: // Sub
                 case 6: // XOR 
                 case 7: // CMP
-                    check_modrm_rm(&inst[1], 8, address_size, rex);
+                    check_modrm_rm(&inst[1], 8, address_size, prfx);
                     get_immediate(&inst[2], 8);
                     return;
                 default:
@@ -604,7 +604,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
                 case 5: // Sub
                 case 6: // XOR 
                 case 7: // CMP
-                    check_modrm_rm(&inst[1], operand_size, address_size, rex);
+                    check_modrm_rm(&inst[1], operand_size, address_size, prfx);
                     if(operand_size == 64)
                         get_immediate(&inst[2], 32);
                     else
@@ -617,7 +617,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
 
         // 16,32,64 rm and 16,32 immediate
         case OP_MOV_C7:
-            check_modrm_rm(&inst[1], operand_size, address_size, rex);
+            check_modrm_rm(&inst[1], operand_size, address_size, prfx);
             if(operand_size == 64)
                 get_immediate(&inst[2], 32);
             else
@@ -633,7 +633,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
                 case 5: // Sub
                 case 6: // XOR 
                 case 7: // CMP
-                    check_modrm_rm(&inst[1], operand_size, address_size, rex);
+                    check_modrm_rm(&inst[1], operand_size, address_size, prfx);
                     get_immediate(&inst[2], 8);
                     return;
                 default:
@@ -646,7 +646,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
                 case 0: // Push
                     if(operand_size == 32)
                         operand_size = 64;
-                    check_modrm_rm(&inst[1], operand_size, address_size, rex);
+                    check_modrm_rm(&inst[1], operand_size, address_size, prfx);
                     printf("memory access [rsp]\n"); 
                     return;
                 default:
@@ -663,7 +663,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
                 case 4: // SAL/SHL rm8 imm8 
                 case 5: // SHR
                 case 7: // SAR
-                    check_modrm_rm(&inst[1], 8, address_size, rex);
+                    check_modrm_rm(&inst[1], 8, address_size, prfx);
                     get_immediate(&inst[2], 8);
                     return;
                 default:
@@ -680,7 +680,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
                 case 4: // SAL/SHL imm8 
                 case 5: // SHR
                 case 7: // SAR
-                    check_modrm_rm(&inst[1], operand_size, address_size, rex);
+                    check_modrm_rm(&inst[1], operand_size, address_size, prfx);
                     get_immediate(&inst[2], 8);
                     return;
                 default:
@@ -697,7 +697,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
                 case 4: // SAL/SHL 1 time
                 case 5: // SHR
                 case 7: // SAR 1 time
-                    check_modrm_rm(&inst[1], 8, address_size, rex);
+                    check_modrm_rm(&inst[1], 8, address_size, prfx);
                     return;
                 default:
                     assert(0);
@@ -713,7 +713,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
                 case 4: // SAL/SHL 1 time
                 case 5: // SHR
                 case 7: // SAR
-                    check_modrm_rm(&inst[1], operand_size, address_size, rex);
+                    check_modrm_rm(&inst[1], operand_size, address_size, prfx);
                     return;
                 default:
                     assert(0);
@@ -730,7 +730,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
                 case 4: // SAL/SHL CL number of times
                 case 5: // SHR
                 case 7: // SAR
-                    check_modrm_rm(&inst[1], 8, address_size, rex);
+                    check_modrm_rm(&inst[1], 8, address_size, prfx);
                     return;
                 default:
                     assert(0);
@@ -746,7 +746,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
                 case 4: // SAL/SHL CL number of times
                 case 5: // SHR
                 case 7: // SAR
-                    check_modrm_rm(&inst[1], operand_size, address_size, rex);
+                    check_modrm_rm(&inst[1], operand_size, address_size, prfx);
                     return;
                 default:
                     assert(0);
@@ -758,7 +758,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
             switch((inst[1] & 0x38) >> 3){
                 case 0: // Test 
                     // Test does no memory writing, skip modrm_rm call 
-                    //check_modrm_rm(&inst[1], 8, address_size, rex);
+                    //check_modrm_rm(&inst[1], 8, address_size, prfx);
                     get_immediate(&inst[2], 8);
                     return;
                 case 2: // Not
@@ -767,7 +767,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
                 case 5: // IMUL rm
                 case 6: // DIV rm
                 case 7: // IDIV rm
-                    check_modrm_rm(&inst[1], 8, address_size, rex);
+                    check_modrm_rm(&inst[1], 8, address_size, prfx);
                     return;
                 default:
                     assert(0);
@@ -778,7 +778,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
             switch((inst[1] & 0x38) >> 3){
                 case 0: // Test
                     // Test does no memory writing, skip modrm_rm call 
-                    //check_modrm_rm(&inst[1], operand_size, address_size, rex);
+                    //check_modrm_rm(&inst[1], operand_size, address_size, prfx);
                     if(operand_size == 64)
                         get_immediate(&inst[2], 32);
                     else
@@ -790,7 +790,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
                 case 5: // IMUL
                 case 6: // DIV rm
                 case 7: // IDIV rm
-                    check_modrm_rm(&inst[1], operand_size, address_size, rex);
+                    check_modrm_rm(&inst[1], operand_size, address_size, prfx);
                     return;
                 default:
                     assert(0);
@@ -801,7 +801,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
             switch((inst[1] & 0x38) >> 3){
                 case 0: // INC 
                 case 1: // DEC 
-                    check_modrm_rm(&inst[1], 8, address_size, rex);
+                    check_modrm_rm(&inst[1], 8, address_size, prfx);
                     return;
                 default:
                     assert(0);
@@ -814,23 +814,23 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
             switch((inst[1] & 0x38) >> 3){
                 case 0: // INC 
                 case 1: // DEC 
-                    check_modrm_rm(&inst[1], operand_size, address_size, rex);
+                    check_modrm_rm(&inst[1], operand_size, address_size, prfx);
                     return;
                 case 2: // Call
-                    check_modrm_rm(&inst[1], 64, address_size, rex);
+                    check_modrm_rm(&inst[1], 64, address_size, prfx);
                     return;
                 case 3: // Call
                     assert(0);//TODO handle this weird sreg case
                     return;
                 case 4: // Jmp
-                    check_modrm_rm(&inst[1], 64, address_size, rex);
+                    check_modrm_rm(&inst[1], 64, address_size, prfx);
                     return; 
                 case 5: // Jmp
                     ;//TODO handle this weird sreg case
                 case 6: // Push
                     if(operand_size == 32)
                         operand_size = 64;
-                    check_modrm_rm(&inst[1], operand_size, address_size, rex);
+                    check_modrm_rm(&inst[1], operand_size, address_size, prfx);
                     printf("memory access [rsp]\n"); 
                     return;
                 default:
@@ -883,14 +883,14 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
             return;
 
         case OP_IMUL_6B:
-            check_modrm_reg(&inst[1], operand_size, address_size, rex);
-            check_modrm_rm(&inst[1], operand_size, address_size, rex);
+            check_modrm_reg(&inst[1], operand_size, address_size, prfx);
+            check_modrm_rm(&inst[1], operand_size, address_size, prfx);
             get_immediate(&inst[2], 8); 
             return;
 
         case OP_IMUL_69:
-            check_modrm_reg(&inst[1], operand_size, address_size, rex);
-            check_modrm_rm(&inst[1], operand_size, address_size, rex);
+            check_modrm_reg(&inst[1], operand_size, address_size, prfx);
+            check_modrm_rm(&inst[1], operand_size, address_size, prfx);
             if(operand_size == 64)
                 get_immediate(&inst[2], 32); 
             else
@@ -903,12 +903,12 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
     // Opcodes whose last 3 bits are for one register
     switch(opcode & 0xf8){
         case OP_MOV_B0:
-            get_register(opcode & 0x7, 8, rex); 
+            get_register(opcode & 0x7, 8, prfx); 
             get_immediate(&inst[1], 8);
             return;
 
         case OP_MOV_B8:
-            get_register(opcode & 0x7, operand_size, rex); 
+            get_register(opcode & 0x7, operand_size, prfx); 
             get_immediate(&inst[1], 8);
             return;
 
@@ -921,7 +921,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
             return;
         
         case OP_XCHG_90:
-            check_modrm_rm(&inst[1], operand_size, address_size, rex);
+            check_modrm_rm(&inst[1], operand_size, address_size, prfx);
             return;
     }
 
