@@ -1,6 +1,8 @@
 #ifndef OPCODE_H
 #define OPCODE_H
 
+#include "prefix.h"
+
 /** Opcodes **/
 // Can be 1,2, or 3 bytes. A fourth can be in ModRM
 enum one_byte_opcodes{
@@ -332,7 +334,7 @@ enum three_byte_opcodes{
 
 };
 
-void check_opcode(unsigned char * inst, int operand_override, int address_override, int rex);
+void check_opcode(unsigned char * inst, struct prefixes * prfx);
 
 // In 2 byte mode, it must have one of the following (3 byte is the same except a third opcode):
     // escape opcode 0F primary opcode and then a second opcode

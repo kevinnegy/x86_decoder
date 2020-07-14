@@ -2,8 +2,8 @@
 #include <string.h>
 #include <assert.h>
 #include "opcode.h"
-#include "x86_decoder.h"
 #include "prefix.h"
+#include "x86_decoder.h"
 #include "immediates.h"
 #include "modrm.h"
 #include "registers.h"
@@ -26,9 +26,12 @@ int find_address_size(int address_override){
     return 64;     
 }
 
-void check_third_opcode(unsigned char * inst, int operand_override, int address_override, int rex){
+void check_third_opcode(unsigned char * inst, struct prefixes * prfx){
     assert(inst != NULL);
     int opcode = inst[0]; 
+    int operand_override = prfx->OPERAND_OVERRIDE;
+    int address_override = prfx->ADDRESS_OVERRIDE;
+    int rex = prfx->REX;
 
     int operand_size = find_operand_size(operand_override, rex);
     int address_size = find_address_size(operand_override);
@@ -77,19 +80,22 @@ void check_third_opcode(unsigned char * inst, int operand_override, int address_
     return;
 }
 
-
-void check_second_opcode(unsigned char * inst, int operand_override, int address_override, int rex){
+void check_second_opcode(unsigned char * inst, struct prefixes * prfx){
     assert(inst != NULL);
 
     int opcode = inst[0];
     
     if(opcode == 0x38 || opcode == 0x3a){
-        check_third_opcode(&inst[1], operand_override, address_override, rex);
+        check_third_opcode(&inst[1], prfx);
         return;
     }
 
-    int operand_size = find_operand_size(operand_override, rex);
-    int address_size = find_address_size(operand_override);
+    int operand_override = prfx->OPERAND_OVERRIDE;
+    int address_override = prfx->ADDRESS_OVERRIDE;
+    int rex = prfx->REX;
+
+    int operand_size = find_operand_size(prfx->OPERAND_OVERRIDE, rex);
+    int address_size = find_address_size(prfx->OPERAND_OVERRIDE);
     switch(opcode){
         case OP_CPUID_A2:
         case OP_NOP_1F: 
@@ -422,17 +428,21 @@ void check_second_opcode(unsigned char * inst, int operand_override, int address
 
 
 // TODO handle 16 bit cases
-void check_opcode(unsigned char * inst, int operand_override, int address_override, int rex){
+void check_opcode(unsigned char * inst, struct prefixes * prfx){
     assert(inst != NULL);
     u_int8_t opcode = inst[0]; 
 
     if(opcode == 0xf){
-        check_second_opcode(&inst[1], operand_override, address_override, rex);
+        check_second_opcode(&inst[1], prfx);
         return;
     }
     else if (opcode == 0xc4 || opcode == 0xc5){
         return;
     }
+
+    int operand_override = prfx->OPERAND_OVERRIDE;
+    int address_override = prfx->ADDRESS_OVERRIDE;
+    int rex = prfx->REX;
 
     int operand_size = find_operand_size(operand_override, rex);
     int address_size = find_address_size(operand_override);
@@ -553,7 +563,7 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
             return;
 
         case OP_LEAVE_C9:
-            if(operand_override == 1)
+            if(prfx->OPERAND_OVERRIDE == 1)
                 printf("pop [bp]");
             else
                 printf("pop [rbp]");
@@ -946,16 +956,5 @@ void check_opcode(unsigned char * inst, int operand_override, int address_overri
     }
 
     assert(0);
-    return;
-}
-
-void check_vex_C5(unsigned char * inst){
-    int vex = inst[0];
-    int opcode = inst[1];
-
-    switch(opcode){
-            
-
-    } 
     return;
 }
