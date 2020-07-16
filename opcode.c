@@ -11,11 +11,14 @@
 // Destination first, source second
 
 // Assume 64 bit programs only 
-int find_operand_size(int operand_override, int rex){
-    if(rex & REX_W) // 66 byte prefix is ignored if REX_W exists
+int find_operand_size(struct prefixes * prfx){
+    if(prfx->REX & REX_W) // 66 byte prefix is ignored if REX_W exists
         return 64;
-    if(operand_override)
+    if(prfx->VEX_C4 & VEX_C4_W)
+        return 64;
+    if(prfx->OPERAND_OVERRIDE)
         return 16;
+    // TODO does VEX pp do anything?
     return 32;     
 }
 
@@ -33,8 +36,8 @@ void check_third_opcode(unsigned char * inst, struct prefixes * prfx){
     int address_override = prfx->ADDRESS_OVERRIDE;
     int rex = prfx->REX;
 
-    int operand_size = find_operand_size(operand_override, rex);
-    int address_size = find_address_size(operand_override);
+    int operand_size = find_operand_size(prfx);
+    int address_size = find_address_size(address_override);
     switch(opcode){
         case OP_MOVBE_F0:
             assert((inst[1] & 0xc0) != 0xc0); // Rm must be a memory location
@@ -94,8 +97,8 @@ void check_second_opcode(unsigned char * inst, struct prefixes * prfx){
     int address_override = prfx->ADDRESS_OVERRIDE;
     int rex = prfx->REX;
 
-    int operand_size = find_operand_size(prfx->OPERAND_OVERRIDE, rex);
-    int address_size = find_address_size(prfx->OPERAND_OVERRIDE);
+    int operand_size = find_operand_size(prfx);
+    int address_size = find_address_size(address_override);
     switch(opcode){
         case OP_CPUID_A2:
         case OP_NOP_1F: 
@@ -444,8 +447,8 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
     int address_override = prfx->ADDRESS_OVERRIDE;
     int rex = prfx->REX;
 
-    int operand_size = find_operand_size(operand_override, rex);
-    int address_size = find_address_size(operand_override);
+    int operand_size = find_operand_size(prfx);
+    int address_size = find_address_size(address_override);
 
     switch(opcode){
         case OP_NOP_90:
@@ -897,7 +900,21 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
                 get_immediate(&inst[2], operand_size);
             return;
 
-
+        case OP_VMOVD_6E:
+            if(prfx->VEX_C4){
+                printf("vmovd (C4)\n");
+                check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
+                check_modrm_rm(&inst[1], operand_size, address_size, prfx); assert(0);
+            }
+            else if(prfx->VEX_C5){
+                printf("vmovd (C5)\n");
+                
+                check_modrm_reg(&inst[1], 4, address_size, prfx); // operand_size should be 4 for the xmm regs
+                check_modrm_rm(&inst[1], operand_size, address_size, prfx);
+        
+            }
+            assert(0);
+            return;
     }
 
     // Opcodes whose last 3 bits are for one register
@@ -919,7 +936,7 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
             get_register(opcode & 0x7, operand_size, 0);
             printf("memory access [rsp]\n"); 
             return;
-        
+
         case OP_XCHG_90:
             check_modrm_rm(&inst[1], operand_size, address_size, prfx);
             return;

@@ -16,19 +16,25 @@ void check_modrm_reg(unsigned char * inst, int operand_size, int address_size, s
     int modrm = inst[0];
     int reg_num = (modrm & REG) >> 3;
     char * reg;
+    u_int8_t rex_r = 0;
 
-    if(prfx->REX != 0){
-        // REX bits need to be in 4th position from right 
-        u_int8_t rex_r = (prfx->REX & REX_R) << 1; 
+    if(prfx->REX != 0)
+        rex_r = (prfx->REX & REX_R) << 1; 
+    else if (prfx->VEX_C4 & VEX_C4_R == 0)
+        rex_r = 0x8; 
+    else if (prfx->VEX_C5 & VEX_C5_R == 0)
+        rex_r = 0x8; 
+    printf("%lx vex c5 and VEX_C5_R %d\n", prfx->VEX_C5, rex_r);
 
-        // Get extension bit from rex prefix
-        reg_num = reg_num| rex_r;
-    }
+    
+
+    assert(rex_r == 8 || rex_r == 0); // REX bit need to be in 4th position from right 
+    reg_num = reg_num| rex_r; // Get extension bit from rex prefix
 
     reg = get_register(reg_num, operand_size, prfx);
+    printf("reg %s\n", reg);
 }
 
-// Should not be called when instruction has REX.W bit set
 void modrm_rm_16(unsigned char * inst, int operand_size, int address_size){
     int modrm = inst[0];
     char * rm;
@@ -118,12 +124,17 @@ void check_modrm_rm(unsigned char * inst, int operand_size, int address_size, st
     char * rm;
     u_int8_t mod = (modrm & MODRM) >> 6;
     u_int8_t modrm_rm = (modrm & RM);
+    u_int8_t rex_b = 0;
 
     if(prfx->REX != 0){
         // Get extension bit from rex prefix (even if REX.W not set, registers can still be extended in 64 bit mode
-        u_int8_t rex_b = (prfx->REX & REX_B) << 3;
-        modrm_rm = modrm_rm | rex_b;
+        rex_b = (prfx->REX & REX_B) << 3;
     }
+    else if (prfx->VEX_C4 & VEX_C4_B == 0){
+        rex_b = 0x8;
+    }
+
+    modrm_rm = modrm_rm | rex_b;
 
     switch(mod){
         case 0:
@@ -207,6 +218,7 @@ void check_modrm_rm(unsigned char * inst, int operand_size, int address_size, st
 
         case 3:
             rm = get_register(modrm_rm, operand_size, prfx);
+            printf("rm %s\n", rm);
             break;
 
         default:

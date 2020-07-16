@@ -40,6 +40,20 @@ void check_prefix(unsigned char * inst, struct prefixes * prfx){
         case PREFIX_ADDR_SIZE_OVERRIDE:
             prfx->ADDRESS_OVERRIDE = 1;
             break;
+        case PREFIX_VEX_C4: // three byte
+            prfx->VEX_C4 = (u_int16_t) inst[1] << 4;
+            prfx->VEX_C4 = prfx->VEX_C5 + inst[2];
+            inst++;
+            inst++;
+            assert(0);
+            break;
+        case PREFIX_VEX_C5: // two byte
+            prfx->VEX_C5 = inst[1];
+            inst++;
+            break;
+        case PREFIX_EVEX_62:
+            assert(0);
+            break;
         default:
             check_rex(inst, prfx);
             return;

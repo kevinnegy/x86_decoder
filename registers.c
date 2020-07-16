@@ -49,6 +49,11 @@ static char * get_xmm_register(int index){
     return strings[index];
 }
 
+static char * get_ymm_register(int index){
+    char * strings[] = {"ymm0", "ymm1", "ymm2", "ymm3", "ymm4", "ymm5", "ymm6", "ymm7", "ymm8", "ymm9", "ymm10", "ymm11", "ymm12", "ymm13", "ymm14", "ymm15"};
+    return strings[index];
+}
+
 char * get_register(int index, int mode, struct prefixes * prfx){
     if(index < 0 || index > 15)
         assert(0);
@@ -77,6 +82,8 @@ char * get_register(int index, int mode, struct prefixes * prfx){
         return get_mm_register(index);
     }
     else if(mode == 4){
+        if (prfx->VEX_C4 & VEX_C4_L || prfx->VEX_C5 & VEX_C5_L)
+            return get_ymm_register(index);
         return get_xmm_register(index);
     }
     return NULL;        

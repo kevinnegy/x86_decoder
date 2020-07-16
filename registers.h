@@ -148,6 +148,25 @@ enum xmm_regs{
     XMM15, 
 };
 
+enum ymm_regs{
+    YMM0,
+    YMM1, 
+    YMM2, 
+    YMM3, 
+    YMM4, 
+    YMM5, 
+    YMM6, 
+    YMM7, 
+    YMM8, 
+    YMM9, 
+    YMM10, 
+    YMM11, 
+    YMM12, 
+    YMM13, 
+    YMM14, 
+    YMM15, 
+};
+
 char * get_register(int index, int mode, struct prefixes * prfx);
 
 #endif 

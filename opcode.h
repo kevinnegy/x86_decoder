@@ -212,6 +212,8 @@ enum one_byte_opcodes{
     OP_TEST_F7 = 0xf7, // 16,32,64 rm imm16,32 
     OP_TEST_84 = 0x84, // 8bit regs/mm - reg->rm 
     OP_TEST_85 = 0x85, // normal reg->rm 
+
+    OP_VMOVD_6E = 0x6e, // vex, rm32/64 -> xmm
     
     // XCHG - done
     OP_XCHG_90 = 0x90, // swap AX,EAX,RAX with rm 16,32,64

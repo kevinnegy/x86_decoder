@@ -87,6 +87,12 @@ int main(){
     test1(bytes);
     printf("mov eax, eax\n");
 
+    bytes[0] = 0xc5;
+    bytes[1] = 0xf9;
+    bytes[2] = 0x6e;
+    bytes[3] = 0xc6;
+    test1(bytes);
+    printf("vmovd xmm0, esi\n");
     return 0;
 }
 

@@ -48,6 +48,7 @@ enum prefix{
 
     PREFIX_VEX_C4 = 0xc4,
     PREFIX_VEX_C5 = 0xc5,
+    PREFIX_EVEX_62 = 0x62,
 };
 //REX-prefix is for 64 bit mode instructions. Only used if instruction operates on 64bit registers. "If rex used when no meaning, it is ignored" (is that a problem?)
 // one rex prefix perinstruction, must go right before opcode or escapeopcode byte(0FH) (after any mandatory prefixes)
@@ -58,20 +59,20 @@ enum prefix{
 #define REX_X       (1 << 1)    // extension of SIB index field
 #define REX_B       (1 << 0)    // extension of ModR/M r/m field, SIB base field, or Opcode reg field ( how is this determined?, seems like based on if r or x are set.)
 
-#define VEX_C4_R (0x1 << 7)
-#define VEX_C4_vvvv (0xf << 3) // if 0xf, ignore, otherwise it is a register specifier
-#define VEX_C4_L (0x1 << 2) // 0 = scalar or 128 bit, 1 = 256 bit
-#define VEX_C4_pp 0x3       // acts like prefix, 00 = none, 01 = 66, 10 = F3, 11 = F2
-
 #define VEX_C5_R (0x1 << 7)
-#define VEX_C5_X (0x1 << 6)
-#define VEX_C5_B (0x1 << 5)
-#define VEX_C5_mmmm 0x1f    // 0 ignore, 1 implied 0F before opcode, 2 implied 0f 38, 3 0f 34
+#define VEX_C5_vvvv (0xf << 3) // if 0xf, ignore, otherwise it is a register specifier
+#define VEX_C5_L (0x1 << 2) // 0 = scalar or 128 bit, 1 = 256 bit
+#define VEX_C5_pp 0x3       // acts like prefix, 00 = none, 01 = 66, 10 = F3, 11 = F2
 
-#define VEX_C5_W (0x1 << 7)
-#define VEX_C5_vvvv (0xf << 3)
-#define VEX_C5_L (0x1 << 2)
-#define VEX_C5_pp 0x3
+#define VEX_C4_R (0x1 << 15) // Inverted: 1 = (REX.R = 0)
+#define VEX_C4_X (0x1 << 14) // Inverted
+#define VEX_C4_B (0x1 << 13) // Inverted
+#define VEX_C4_mmmm 0x1f00    // 0 ignore, 1 implied 0F before opcode, 2 implied 0f 38, 3 0f 34
+
+#define VEX_C4_W (0x1 << 7)
+#define VEX_C4_vvvv (0xf << 3)
+#define VEX_C4_L (0x1 << 2)
+#define VEX_C4_pp 0x3
 
 
 
