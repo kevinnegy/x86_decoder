@@ -351,6 +351,7 @@ void check_second_opcode(unsigned char * inst, struct prefixes * prfx){
             return;
 
     }
+
     if((opcode & 0xF0) == 0x40){
         switch(opcode & 0xf){
             case 0: // CMOVO (0F = 1)
@@ -424,8 +425,6 @@ void check_second_opcode(unsigned char * inst, struct prefixes * prfx){
     assert(0);
     return;
 }
-
-
 
 // TODO handle 16 bit cases
 void check_opcode(unsigned char * inst, struct prefixes * prfx){
@@ -896,8 +895,6 @@ void check_opcode(unsigned char * inst, struct prefixes * prfx){
             else
                 get_immediate(&inst[2], operand_size);
             return;
-
-
     }
 
     // Opcodes whose last 3 bits are for one register
